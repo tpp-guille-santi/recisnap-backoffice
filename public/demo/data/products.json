@@ -9,7 +9,7 @@
 			"price": 65,
 			"category": "Accessories",
 			"quantity": 24,
-			"inventoryStatus": "OUTOFSTOCK",
+			"inventoryStatus": "INSTOCK",
 			"rating": 5
 		},
 		{
