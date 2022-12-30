@@ -4,19 +4,9 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
-import { app } from "./firebase-config";
+import { app } from "../firebase-config";
 import { Card } from "primereact/card";
 import Link from "next/link";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBC6Ex5oeA9ICNG8lO1bCeNnp4f0-bNjVU",
-  authDomain: "recisnap.firebaseapp.com",
-  projectId: "recisnap",
-  storageBucket: "recisnap.appspot.com",
-  messagingSenderId: "924203588296",
-  appId: "1:924203588296:web:2c3351678558628b4d23fd",
-  measurementId: "G-8MF8Z1RPMS",
-};
 
 const LoginPage = () => {
   const [value1, setValue1] = useState();
