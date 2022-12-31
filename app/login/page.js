@@ -1,18 +1,26 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { app } from "../firebase-config";
 import { Card } from "primereact/card";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
   const [value1, setValue1] = useState();
   const [value2, setValue2] = useState();
+
   const auth = getAuth(app);
   const googleProvider = new GoogleAuthProvider();
+  const router = useRouter();
 
   const signInWithGoogle = async () => {
     try {
@@ -45,6 +53,22 @@ const LoginPage = () => {
     }
   };
 
+  const signInWithEmail = (email, password) => {
+    console.log("Loging in");
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        console.log("Success");
+        // Signed in
+        const user = userCredential.user;
+        router.push("/");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      });
+  };
+
   return (
     <div>
       <h1>Recisnap!</h1>
@@ -65,7 +89,12 @@ const LoginPage = () => {
             />
           </div>
           <div>
-            <Button label="Loguearse" onClick={() => {}} />
+            <Button
+              label="Loguearse"
+              onClick={() => {
+                signInWithEmail(value1, value2);
+              }}
+            />
           </div>
           <br></br>
           <hr></hr>
