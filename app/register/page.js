@@ -28,7 +28,7 @@ const RegisterPage = () => {
         // Signed in
         console.log("Signed In!");
         const user = userCredential.user;
-        router.push("/");
+        router.push("/homepage");
       })
       .catch((error) => {
         console.log("Error sign in");
