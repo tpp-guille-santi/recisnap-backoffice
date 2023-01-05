@@ -9,8 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "firebase": "^9.15.0",
     "axios": "^1.2.2",
+    "firebase": "^9.15.0",
+    "json-loader": "^0.5.7",
     "next": "13.0.0",
     "primeflex": "^3.3.0",
     "primeicons": "^6.0.1",
