@@ -4,10 +4,26 @@ import { Dropdown } from "primereact/dropdown";
 import data from "../../config/argentina.json";
 
 const Homepage = () => {
-  const [province, setProvince] = useState(data.provincias[0]);
+  const [province, setProvince] = useState();
+  const [departmentList, setDepartmentList] = useState([]);
+  const [deparment, setDepartment] = useState();
+  const [municipiosList, setmunicipiosList] = useState([]);
+  const [municipio, setMunicipio] = useState();
+  const [departmentDisabled, setDepartmentDisabled] = useState(true);
+  const [municipioDisabled, setMunicipioDisabled] = useState(true);
 
-  const printInfo = () => {
-    console.log(data);
+  const provinceSelected = (province) => {
+    setProvince(province);
+    setMunicipio(null);
+    setDepartmentList(province.departamentos);
+    setDepartmentDisabled(false);
+    setMunicipioDisabled(true);
+  };
+
+  const departmentSelected = (department) => {
+    setDepartment(department);
+    setmunicipiosList(department.municipios);
+    setMunicipioDisabled(false);
   };
 
   return (
@@ -17,8 +33,25 @@ const Homepage = () => {
         optionLabel="nombre"
         value={province}
         options={data.provincias}
-        placeholder="Select a City"
-        onChange={(e) => setProvince(e.value)}
+        placeholder="Seleccione una provincia"
+        onChange={(e) => provinceSelected(e.value)}
+      ></Dropdown>
+      <Dropdown
+        optionLabel="nombre"
+        value={deparment}
+        options={departmentList}
+        placeholder="Seleccione un departamento"
+        onChange={(e) => departmentSelected(e.value)}
+        disabled={departmentDisabled}
+      ></Dropdown>
+      <Dropdown
+        optionLabel="nombre"
+        value={municipio}
+        options={municipiosList}
+        placeholder="Seleccione un municipio"
+        emptyMessage="El departamento no posee municipios"
+        onChange={(e) => setMunicipio(e.value)}
+        disabled={municipioDisabled}
       ></Dropdown>
     </div>
   );
