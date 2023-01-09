@@ -9,7 +9,11 @@ const Homepage = () => {
   return (
     <div>
       <div>Homepage</div>
-      <DropdownFilter></DropdownFilter>
+      <DropdownFilter
+        provincia={nullFunction}
+        departamento={nullFunction}
+        municipio={nullFunction}
+      ></DropdownFilter>
     </div>
   );
 };

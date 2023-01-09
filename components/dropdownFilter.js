@@ -19,16 +19,19 @@ const DropdownFilter = (props) => {
     setDepartmentList(province.departamentos);
     setDepartmentDisabled(false);
     setMunicipioDisabled(true);
+    props.provincia(province);
   };
 
   const departmentSelected = (department) => {
     setDepartment(department);
     setmunicipiosList(department.municipios);
     setMunicipioDisabled(false);
+    props.departamento(department);
   };
 
   const municipioSelected = (municipio) => {
     setMunicipio(municipio);
+    props.municipio(municipio);
   };
 
   return (
