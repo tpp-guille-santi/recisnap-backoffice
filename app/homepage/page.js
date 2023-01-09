@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import DropdownFilter from "../../components/dropdownFilter";
 
