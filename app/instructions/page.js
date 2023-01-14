@@ -10,6 +10,7 @@ import { RadioButton } from 'primereact/radiobutton';
 import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { Dropdown } from 'primereact/dropdown';
 import axios from 'axios';
 
 export default function Home() {
@@ -23,7 +24,9 @@ export default function Home() {
     departamento: null,
   };
 
+  const [selectedMaterial, setSelectedMaterial] = useState(null);
   const [products, setProducts] = useState(null);
+  const [materials, setMaterials] = useState(null);
   const [productDialog, setProductDialog] = useState(false);
   const [deleteProductDialog, setDeleteProductDialog] = useState(false);
   const [deleteProductsDialog, setDeleteProductsDialog] = useState(false);
@@ -34,13 +37,47 @@ export default function Home() {
   const toast = useRef(null);
   const dt = useRef(null);
 
+
+
   async function getInstructions() {
-    const response = await axios.get('http://0.0.0.0:8000/pages');
-    return response.data
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/pages`);
+      return response.data;
+    } catch (e) {
+      console.log(e)
+      return [];
+    }
+  }
+
+  async function getMaterials() {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/materials`);
+      return response.data;
+    } catch (e) {
+      console.log(e)
+      return [];
+    }
+  }
+
+  async function deleteInstruction(instruciton) {
+    try {
+      const response = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/pages/${instruciton.id}`);
+      return true;
+    } catch (e) {
+      console.log(e)
+      return false;
+    }
+  }
+
+
+  async function deleteInstructions(instrucitons) {
+    const success = await instrucitons.every(deleteInstruction);
+    return success;
   }
 
   useEffect(() => {
     getInstructions().then(data => setProducts(data));
+    getMaterials().then(data => setMaterials(data));
   }, []);
 
 
@@ -49,11 +86,13 @@ export default function Home() {
     setProduct(emptyProduct);
     setSubmitted(false);
     setProductDialog(true);
+    setSelectedMaterial(materials[0])
   }
 
   const hideDialog = () => {
     setSubmitted(false);
     setProductDialog(false);
+    setSelectedMaterial(null);
   }
 
   const hideDeleteProductDialog = () => {
@@ -92,6 +131,7 @@ export default function Home() {
   const editProduct = (product) => {
     setProduct({ ...product });
     setProductDialog(true);
+    setSelectedMaterial(materials.find(val => val.name === product.material_name));
   }
 
   const confirmDeleteProduct = (product) => {
@@ -99,7 +139,12 @@ export default function Home() {
     setDeleteProductDialog(true);
   }
 
-  const deleteProduct = () => {
+  const deleteProduct = async () => {
+    const success = await deleteInstruction(product);
+    if (!success) {
+      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Product could not be deleted', life: 3000 });
+      return;
+    }
     let _products = products.filter(val => val.id !== product.id);
     setProducts(_products);
     setDeleteProductDialog(false);
@@ -133,7 +178,12 @@ export default function Home() {
     setDeleteProductsDialog(true);
   }
 
-  const deleteSelectedProducts = () => {
+  const deleteSelectedProducts = async () => {
+    const success = await deleteInstructions(selectedProducts);
+    if (!success) {
+      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Some products could not be deleted', life: 3000 });
+      return;
+    }
     let _products = products.filter(val => !selectedProducts.includes(val));
     setProducts(_products);
     setDeleteProductsDialog(false);
@@ -163,28 +213,36 @@ export default function Home() {
     setProduct(_product);
   }
 
+  const capitalizeWords = (words) => {
+    if (!words) {
+      return "";
+    }
+    return words.split(" ").map((word) => {
+      return word[0].toUpperCase() + word.substring(1);
+    }).join(" ");
+  }
 
 
   const materialNameBodyTemplate = (rowData) => {
     const material_name = rowData.material_name ?? '';
-    return material_name.toUpperCase()
+    return capitalizeWords(material_name);
   }
 
   const municipioBodyTemplate = (rowData) => {
     const municipio = rowData.municipio ?? '';
-    return municipio.toUpperCase()
+    return capitalizeWords(municipio);
   }
 
   const provinciaBodyTemplate = (rowData) => {
     const provincia = rowData.provincia ?? '';
-    return provincia.toUpperCase()
+    return capitalizeWords(provincia);
   }
 
 
 
   const departamentoBodyTemplate = (rowData) => {
     const departamento = rowData.departamento ?? '';
-    return departamento.toUpperCase()
+    return capitalizeWords(departamento);
   }
 
 
@@ -231,6 +289,12 @@ export default function Home() {
     </React.Fragment>
   );
 
+  const onMaterialNameChange = (e) => {
+    setProduct({ ...product, 'material_name': e.value.name });
+    setSelectedMaterial(e.value);
+  }
+
+
   return (
     <div className="datatable-crud-demo surface-card p-4 border-round shadow-2">
       <Toast ref={toast} />
@@ -252,18 +316,17 @@ export default function Home() {
       </DataTable>
 
       <Dialog visible={productDialog} breakpoints={{ '960px': '75vw', '640px': '100vw' }} style={{ width: '40vw' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
-        {product.image && <img src={`demo/images/product/${product.image}`} onError={(e) => e.target.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={product.image} className="block mt-0 mx-auto mb-5 w-20rem shadow-2" />}
         <div className="field">
-          <label htmlFor="name">Name</label>
-          <InputText id="name" value={product.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.name })} />
-          {submitted && !product.name && <small className="p-error">Name is required.</small>}
+          <label htmlFor="name">Material Name</label>
+          <Dropdown id="name" value={selectedMaterial} options={materials} onChange={onMaterialNameChange} required autoFocus optionLabel="name" className={classNames({ 'p-invalid': submitted && !product.material_name })} />
+          {submitted && !product.material_name && <small className="p-error">Material Name is required.</small>}
         </div>
-        <div className="field">
+        {/* <div className="field">
           <label htmlFor="description">Description</label>
           <InputTextarea id="description" value={product.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
-        </div>
+        </div> */}
 
-        <div className="field">
+        {/* <div className="field">
           <label className="mb-3">Category</label>
           <div className="formgrid grid">
             <div className="field-radiobutton col-6">
@@ -283,9 +346,9 @@ export default function Home() {
               <label htmlFor="category4">Fitness</label>
             </div>
           </div>
-        </div>
+        </div> */}
 
-        <div className="formgrid grid">
+        {/* <div className="formgrid grid">
           <div className="field col">
             <label htmlFor="price">Price</label>
             <InputNumber id="price" value={product.price} onValueChange={(e) => onInputNumberChange(e, 'price')} mode="currency" currency="USD" locale="en-US" />
@@ -294,7 +357,7 @@ export default function Home() {
             <label htmlFor="quantity">Quantity</label>
             <InputNumber id="quantity" value={product.quantity} onValueChange={(e) => onInputNumberChange(e, 'quantity')} integeronly />
           </div>
-        </div>
+        </div> */}
       </Dialog>
 
       <Dialog visible={deleteProductDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
