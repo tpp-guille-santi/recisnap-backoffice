@@ -71,11 +71,13 @@ const LoginPage = () => {
         >
           <div>
             <InputText
+              class="py-1"
               value={value1}
               onChange={(e) => setValue1(e.target.value)}
               placeholder="Email"
             />
             <Password
+              class="py-1"
               value={value2}
               onChange={(e) => setValue2(e.target.value)}
               placeholder="Contraseña"
@@ -92,6 +94,9 @@ const LoginPage = () => {
           <br></br>
           <hr></hr>
           <Button label="Entrar con Google" onClick={signInWithGoogle} />
+          <div class="pt-3">
+            <Link href="/reset">Olvidé mi contraseña</Link>
+          </div>
         </Card>
       </div>
       <Card
