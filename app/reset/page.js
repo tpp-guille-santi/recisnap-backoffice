@@ -31,9 +31,10 @@ const ResetPasswordPage = () => {
     <Card>
       <div>Por favor, ingrese su email abajo y haga click en el botón</div>
       <InputText
+        class="py-1"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="Nombre y Apellido"
+        placeholder="Email"
       ></InputText>
       <Button onClick={sendResetPasswordEmail}>Resetear Password</Button>
     </Card>
