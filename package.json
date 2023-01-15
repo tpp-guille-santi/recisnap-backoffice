@@ -6,7 +6,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "prettier --write \"**/*.{js,ts,tsx}\"",
+    "prepare": "husky install"
+  },
+  "husky": {
+    "hooks": {
+       "pre-commit": "lint-staged",
+       "pre-push": "npm run type-check"
+     }
+  },
+  "lint-staged": {
+     "*.@(ts|tsx)": [
+       "npm lint",
+       "npm format"
+     ]
   },
   "dependencies": {
     "axios": "^1.2.2",
@@ -27,6 +41,10 @@
     "@types/react-dom": "18.0.8",
     "eslint": "8.26.0",
     "eslint-config-next": "13.0.0",
+    "eslint-config-prettier": "^8.6.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.1.0",
+    "prettier": "^2.8.3",
     "typescript": "4.8.4"
   }
 }
