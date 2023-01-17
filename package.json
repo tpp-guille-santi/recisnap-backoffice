@@ -12,21 +12,23 @@
   },
   "husky": {
     "hooks": {
-       "pre-commit": "lint-staged",
-       "pre-push": "npm run type-check"
-     }
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run type-check"
+    }
   },
   "lint-staged": {
-     "*.@(ts|tsx)": [
-       "npm lint",
-       "npm format"
-     ]
+    "*.@(ts|tsx)": [
+      "npm lint",
+      "npm format"
+    ]
   },
   "dependencies": {
+    "@uiw/react-md-editor": "^3.20.2",
     "axios": "^1.2.2",
     "firebase": "^9.15.0",
     "json-loader": "^0.5.7",
     "next": "13.0.0",
+    "next-remove-imports": "^1.0.8",
     "primeflex": "^3.3.0",
     "primeicons": "^6.0.1",
     "primereact": "^8.7.3",
