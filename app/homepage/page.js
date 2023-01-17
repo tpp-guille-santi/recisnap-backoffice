@@ -11,6 +11,7 @@ const Homepage = () => {
     <div>
       <div>Homepage</div>
       <DropdownFilter
+        material={nullFunction} // para esto hay que agregar el el useMaterials y después los hooks useEffect y useState para obtenerlos del back
         provincia={nullFunction}
         departamento={nullFunction}
         municipio={nullFunction}

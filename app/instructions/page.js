@@ -12,6 +12,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import axios from 'axios';
+import DropdownFilter from "../../components/dropdownFilter";
 
 export default function Home() {
   let emptyProduct = {
@@ -24,7 +25,7 @@ export default function Home() {
     departamento: null,
   };
 
-  const [selectedMaterial, setSelectedMaterial] = useState(null);
+  const [preloaded, setPreloaded] = useState(false);
   const [products, setProducts] = useState(null);
   const [materials, setMaterials] = useState(null);
   const [productDialog, setProductDialog] = useState(false);
@@ -37,6 +38,23 @@ export default function Home() {
   const toast = useRef(null);
   const dt = useRef(null);
 
+
+  const setMaterial = (argument) => {
+    console.log(argument)
+    setProduct({ ...product, 'material_name': argument.name });
+  };
+
+  const setProvincia = (argument) => {
+    setProduct({ ...product, 'provincia': argument.nombre });
+  };
+
+  const setMunicipio = (argument) => {
+    setProduct({ ...product, 'municipio': argument.nombre });
+  };
+
+  const setDepartamento = (argument) => {
+    setProduct({ ...product, 'departamento': argument.nombre });
+  };
 
 
   async function getInstructions() {
@@ -86,13 +104,12 @@ export default function Home() {
     setProduct(emptyProduct);
     setSubmitted(false);
     setProductDialog(true);
-    setSelectedMaterial(materials[0])
+    setPreloaded(false);
   }
 
   const hideDialog = () => {
     setSubmitted(false);
     setProductDialog(false);
-    setSelectedMaterial(null);
   }
 
   const hideDeleteProductDialog = () => {
@@ -103,35 +120,52 @@ export default function Home() {
     setDeleteProductsDialog(false);
   }
 
-  const saveProduct = () => {
-    setSubmitted(true);
+  const createProduct = async () => {
+    if (product.material_name && product.provincia) {
+      try {
+        const body = {
+          "material_name": product.material_name,
+          "editable": true,
+          "municipio": product.municipio,
+          "provincia": product.provincia,
+          "departamento": product.departamento,
+        }
+        console.log(`product:`)
+        console.log(JSON.stringify(body))
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/pages`, body);
 
-    if (product.name.trim()) {
-      let _products = [...products];
-      let _product = { ...product };
-      if (product.id) {
-        const index = findIndexById(product.id);
-
-        _products[index] = _product;
-        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
-      }
-      else {
-        _product.id = createId();
-        _product.image = 'product-placeholder.svg';
+        const _product = response.data;
+        let _products = [...products];
         _products.push(_product);
+        setProducts(_products);
         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
+      } catch (e) {
+        console.log(e)
+        return [];
       }
-
-      setProducts(_products);
-      setProductDialog(false);
-      setProduct(emptyProduct);
     }
+  }
+
+  const updateProduct = () => {
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
+  }
+
+  const saveProduct = async () => {
+    setSubmitted(true);
+    if (preloaded) {
+      updateProduct();
+    }
+    else {
+      await createProduct();
+    }
+    setProductDialog(false);
+    setProduct(emptyProduct);
   }
 
   const editProduct = (product) => {
     setProduct({ ...product });
     setProductDialog(true);
-    setSelectedMaterial(materials.find(val => val.name === product.material_name));
+    setPreloaded(true)
   }
 
   const confirmDeleteProduct = (product) => {
@@ -191,27 +225,7 @@ export default function Home() {
     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
   }
 
-  const onCategoryChange = (e) => {
-    let _product = { ...product };
-    _product['category'] = e.value;
-    setProduct(_product);
-  }
 
-  const onInputChange = (e, name) => {
-    const val = (e.target && e.target.value) || '';
-    let _product = { ...product };
-    _product[`${name}`] = val;
-
-    setProduct(_product);
-  }
-
-  const onInputNumberChange = (e, name) => {
-    const val = e.value || 0;
-    let _product = { ...product };
-    _product[`${name}`] = val;
-
-    setProduct(_product);
-  }
 
   const capitalizeWords = (words) => {
     if (!words) {
@@ -289,11 +303,6 @@ export default function Home() {
     </React.Fragment>
   );
 
-  const onMaterialNameChange = (e) => {
-    setProduct({ ...product, 'material_name': e.value.name });
-    setSelectedMaterial(e.value);
-  }
-
 
   return (
     <div className="datatable-crud-demo surface-card p-4 border-round shadow-2">
@@ -316,48 +325,16 @@ export default function Home() {
       </DataTable>
 
       <Dialog visible={productDialog} breakpoints={{ '960px': '75vw', '640px': '100vw' }} style={{ width: '40vw' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
-        <div className="field">
-          <label htmlFor="name">Material Name</label>
-          <Dropdown id="name" value={selectedMaterial} options={materials} onChange={onMaterialNameChange} required autoFocus optionLabel="name" className={classNames({ 'p-invalid': submitted && !product.material_name })} />
-          {submitted && !product.material_name && <small className="p-error">Material Name is required.</small>}
-        </div>
-        {/* <div className="field">
-          <label htmlFor="description">Description</label>
-          <InputTextarea id="description" value={product.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
-        </div> */}
 
-        {/* <div className="field">
-          <label className="mb-3">Category</label>
-          <div className="formgrid grid">
-            <div className="field-radiobutton col-6">
-              <RadioButton inputId="category1" name="category" value="Accessories" onChange={onCategoryChange} checked={product.category === 'Accessories'} />
-              <label htmlFor="category1">Accessories</label>
-            </div>
-            <div className="field-radiobutton col-6">
-              <RadioButton inputId="category2" name="category" value="Clothing" onChange={onCategoryChange} checked={product.category === 'Clothing'} />
-              <label htmlFor="category2">Clothing</label>
-            </div>
-            <div className="field-radiobutton col-6">
-              <RadioButton inputId="category3" name="category" value="Electronics" onChange={onCategoryChange} checked={product.category === 'Electronics'} />
-              <label htmlFor="category3">Electronics</label>
-            </div>
-            <div className="field-radiobutton col-6">
-              <RadioButton inputId="category4" name="category" value="Fitness" onChange={onCategoryChange} checked={product.category === 'Fitness'} />
-              <label htmlFor="category4">Fitness</label>
-            </div>
-          </div>
-        </div> */}
-
-        {/* <div className="formgrid grid">
-          <div className="field col">
-            <label htmlFor="price">Price</label>
-            <InputNumber id="price" value={product.price} onValueChange={(e) => onInputNumberChange(e, 'price')} mode="currency" currency="USD" locale="en-US" />
-          </div>
-          <div className="field col">
-            <label htmlFor="quantity">Quantity</label>
-            <InputNumber id="quantity" value={product.quantity} onValueChange={(e) => onInputNumberChange(e, 'quantity')} integeronly />
-          </div>
-        </div> */}
+        <DropdownFilter
+          material={setMaterial}
+          materials={materials}
+          instruction={product}
+          provincia={setProvincia}
+          departamento={setDepartamento}
+          municipio={setMunicipio}
+          preloaded={preloaded}
+        ></DropdownFilter>
       </Dialog>
 
       <Dialog visible={deleteProductDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
