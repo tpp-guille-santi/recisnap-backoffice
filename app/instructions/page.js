@@ -324,7 +324,7 @@ export default function Home() {
         <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
       </DataTable>
 
-      <Dialog visible={productDialog} breakpoints={{ '960px': '75vw', '640px': '100vw' }} style={{ width: '40vw' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
+      <Dialog visible={productDialog} breakpoints={{ '960px': '75vw', '640px': '100vw' }} style={{ width: '200vw' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
 
         <DropdownFilter
           material={setMaterial}
