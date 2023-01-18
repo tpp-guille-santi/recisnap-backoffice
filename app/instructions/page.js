@@ -13,6 +13,10 @@ import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import axios from 'axios';
 import DropdownFilter from "../../components/dropdownFilter";
+import MDEditor from "@uiw/react-md-editor";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+
 
 export default function Home() {
   let emptyProduct = {
@@ -35,6 +39,7 @@ export default function Home() {
   const [selectedProducts, setSelectedProducts] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
+  const [markdown, setMarkdown] = useState('');
   const toast = useRef(null);
   const dt = useRef(null);
 
@@ -335,6 +340,7 @@ export default function Home() {
           municipio={setMunicipio}
           preloaded={preloaded}
         ></DropdownFilter>
+        <MDEditor height={200} value={markdown} onChange={setMarkdown} />
       </Dialog>
 
       <Dialog visible={deleteProductDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
