@@ -10,7 +10,7 @@ export default function RootLayout({ children }) {
   return (
     <html>
       <body>
-        <main>
+        <main class="top-centered">
           <nav>
             <Link href="/">Home</Link>
             <Link href="/instructions">Instructions</Link>

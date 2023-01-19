@@ -310,7 +310,7 @@ export default function Home() {
 
 
   return (
-    <div className="datatable-crud-demo surface-card p-4 border-round shadow-2">
+    <div>
       <Toast ref={toast} />
 
       <div className="text-3xl text-800 font-bold mb-4">PrimeReact CRUD</div>

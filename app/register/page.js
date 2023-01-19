@@ -1,72 +1,132 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { Card } from "primereact/card";
-import { Button } from "primereact/button";
-import { Password } from "primereact/password";
-import { InputText } from "primereact/inputtext";
 import { app } from "../firebase-config";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
-const RegisterPage = () => {
-  const [name, setName] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [passwordRepeat, setPasswordRepeat] = useState();
+import { Form, Field } from 'react-final-form';
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+import { Dropdown } from 'primereact/dropdown';
+import { Calendar } from 'primereact/calendar';
+import { Password } from 'primereact/password';
+import { Checkbox } from 'primereact/checkbox';
+import { Dialog } from 'primereact/dialog';
+import { Divider } from 'primereact/divider';
+import { classNames } from 'primereact/utils';
 
-  const auth = getAuth(app);
-  const router = useRouter();
+export const RegisterPage = () => {
 
-  const saveUser = () => {
-    console.log("Saving user");
-    if (password !== passwordRepeat) {
-      console.log("Passwords dont match");
-      return;
+  const [showMessage, setShowMessage] = useState(false);
+  const [formData, setFormData] = useState({});
+
+
+
+  const validate = (data) => {
+    let errors = {};
+
+    if (!data.name) {
+      errors.name = 'Name is required.';
     }
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        console.log("Signed In!");
-        const user = userCredential.user;
-        router.push("/homepage");
-      })
-      .catch((error) => {
-        console.log("Error sign in");
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-      });
+
+    if (!data.email) {
+      errors.email = 'Email is required.';
+    }
+    else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(data.email)) {
+      errors.email = 'Invalid email address. E.g. example@email.com';
+    }
+
+    if (!data.password) {
+      errors.password = 'Password is required.';
+    }
+
+    if (!data.accept) {
+      errors.accept = 'You need to agree to the terms and conditions.';
+    }
+
+    return errors;
   };
 
+  const onSubmit = (data, form) => {
+    setFormData(data);
+    setShowMessage(true);
+
+    form.restart();
+  };
+
+  const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
+  const getFormErrorMessage = (meta) => {
+    return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
+  };
+
+  const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false)} /></div>;
+  const passwordHeader = <h6>Pick a password</h6>;
+  const passwordFooter = (
+    <React.Fragment>
+      <Divider />
+      <p className="mt-2">Suggestions</p>
+      <ul className="pl-2 ml-2 mt-0" style={{ lineHeight: '1.5' }}>
+        <li>At least one lowercase</li>
+        <li>At least one uppercase</li>
+        <li>At least one numeric</li>
+        <li>Minimum 8 characters</li>
+      </ul>
+    </React.Fragment>
+  );
+
   return (
-    <div>
-      <Card>
-        <div>
-          <InputText
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Nombre y Apellido"
-          />
-          <InputText
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-          />
-          <Password
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Contraseña"
-          />
-          <Password
-            value={passwordRepeat}
-            onChange={(e) => setPasswordRepeat(e.target.value)}
-            placeholder="Repetir Contraseña"
-          />
-        </div>
-        <div>
-          <Button label="Registrarse" onClick={saveUser} />
-        </div>
-      </Card>
+    <div className="flex align-content-start  justify-content-center mt-7">
+      <div className="card">
+        <h5 className="text-center text-3xl font-medium">Register</h5>
+        <Form onSubmit={onSubmit} initialValues={{ name: '', email: '', password: '', date: null, accept: false }} validate={validate} render={({ handleSubmit }) => (
+          <form onSubmit={handleSubmit} className="p-fluid">
+            <Field name="name" render={({ input, meta }) => (
+              <div className="field">
+                <span className="p-float-label">
+                  <InputText id="name" {...input} autoFocus className={classNames({ 'p-invalid': isFormFieldValid(meta) })} />
+                  <label htmlFor="name" className={classNames({ 'p-error': isFormFieldValid(meta) })}>Name*</label>
+                </span>
+                {getFormErrorMessage(meta)}
+              </div>
+            )} />
+            <Field name="email" render={({ input, meta }) => (
+              <div className="field">
+                <span className="p-float-label p-input-icon-right">
+                  <i className="pi pi-envelope" />
+                  <InputText id="email" {...input} className={classNames({ 'p-invalid': isFormFieldValid(meta) })} />
+                  <label htmlFor="email" className={classNames({ 'p-error': isFormFieldValid(meta) })}>Email*</label>
+                </span>
+                {getFormErrorMessage(meta)}
+              </div>
+            )} />
+            <Field name="password" render={({ input, meta }) => (
+              <div className="field">
+                <span className="p-float-label">
+                  <Password id="password" {...input} toggleMask className={classNames({ 'p-invalid': isFormFieldValid(meta) })} header={passwordHeader} footer={passwordFooter} />
+                  <label htmlFor="password" className={classNames({ 'p-error': isFormFieldValid(meta) })}>Password*</label>
+                </span>
+                {getFormErrorMessage(meta)}
+              </div>
+            )} />
+            <Field name="date" render={({ input }) => (
+              <div className="field">
+                <span className="p-float-label">
+                  <Calendar id="date" {...input} dateFormat="dd/mm/yy" mask="99/99/9999" showIcon />
+                  <label htmlFor="date">Birthday</label>
+                </span>
+              </div>
+            )} />
+            <Field name="accept" type="checkbox" render={({ input, meta }) => (
+              <div className="field-checkbox">
+                <Checkbox inputId="accept" {...input} className={classNames({ 'p-invalid': isFormFieldValid(meta) })} />
+                <label htmlFor="accept" className={classNames({ 'p-error': isFormFieldValid(meta) })}>I agree to the terms and conditions*</label>
+              </div>
+            )} />
+
+            <Button type="submit" label="Submit" className="mt-2" />
+          </form>
+        )} />
+      </div>
     </div>
   );
 };
