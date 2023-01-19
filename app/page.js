@@ -5,6 +5,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
+  getAdditionalUserInfo,
 } from "firebase/auth";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
@@ -13,6 +14,7 @@ import { app } from "./firebase-config";
 import { Card } from "primereact/card";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { saveNewUser } from "../utils/serverConnector";
 
 const LoginPage = () => {
   const [value1, setValue1] = useState();
@@ -26,6 +28,16 @@ const LoginPage = () => {
     console.log("Login In Google");
     const res = await signInWithPopup(auth, googleProvider)
       .then((credentials) => {
+        const isNewUser = getAdditionalUserInfo(credentials).isNewUser;
+        //Manejar Signup
+        if (isNewUser) {
+          const exit = saveNewUser({
+            "user-email": credentials.user.email,
+            "user-name": credentials.user.displayName,
+          });
+        }
+        //Manejar Login
+        //
         console.log("Login Exitoso");
         router.push("/homepage");
       })
@@ -71,13 +83,12 @@ const LoginPage = () => {
         >
           <div>
             <InputText
-              class="py-1"
               value={value1}
               onChange={(e) => setValue1(e.target.value)}
               placeholder="Email"
             />
             <Password
-              class="py-1"
+              style={{ marginTop: "1em", marginBottom: "1em" }}
               value={value2}
               onChange={(e) => setValue2(e.target.value)}
               placeholder="Contraseña"
@@ -93,8 +104,12 @@ const LoginPage = () => {
           </div>
           <br></br>
           <hr></hr>
-          <Button label="Entrar con Google" onClick={signInWithGoogle} />
-          <div class="pt-3">
+          <Button
+            style={{ marginTop: "1em", marginBottom: "1em" }}
+            label="Entrar con Google"
+            onClick={signInWithGoogle}
+          />
+          <div>
             <Link href="/reset">Olvidé mi contraseña</Link>
           </div>
         </Card>
