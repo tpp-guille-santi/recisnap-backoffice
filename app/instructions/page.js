@@ -1,22 +1,18 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
-import { InputTextarea } from 'primereact/inputtextarea';
-import { RadioButton } from 'primereact/radiobutton';
-import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { Dropdown } from 'primereact/dropdown';
 import axios from 'axios';
 import DropdownFilter from "../../components/dropdownFilter";
 import MDEditor from "@uiw/react-md-editor";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
-
+import { app } from "../firebase-config";
+import { getStorage, getBytes, ref, uploadString } from "firebase/storage";
 
 export default function Home() {
   let emptyProduct = {
@@ -37,12 +33,41 @@ export default function Home() {
   const [deleteProductsDialog, setDeleteProductsDialog] = useState(false);
   const [product, setProduct] = useState(emptyProduct);
   const [selectedProducts, setSelectedProducts] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [markdown, setMarkdown] = useState('');
   const toast = useRef(null);
   const dt = useRef(null);
 
+
+
+  const storage = getStorage(app);
+
+  const getFilename = (product) => {
+    return [product.provincia ?? '', product.departamento ?? '', product.municipio ?? '', product.material_name ?? ''].join('-');
+  }
+
+  const uploadInstructionsMarkdown = async () => {
+    // if (!markdown) return;
+    try {
+      const storageRef = ref(storage, `/markdowns/${encodeURI(getFilename(product))}.md`);
+      uploadString(storageRef, markdown).then((snapshot) => {
+        console.log('Uploaded a raw string!');
+      });
+    } catch (e) {
+      console.log("Error")
+    }
+  }
+
+  const setMarkdownFromInstructions = async (product) => {
+    try {
+      const storageRef = ref(storage, `/markdowns/${encodeURI(getFilename(product))}.md`);
+      const bytes = await getBytes(storageRef);
+      const storedMarkdown = new TextDecoder().decode(bytes);
+      setMarkdown(storedMarkdown);
+    } catch (e) {
+      setMarkdown('');
+    }
+  }
 
   const setMaterial = (argument) => {
     console.log(argument)
@@ -107,14 +132,14 @@ export default function Home() {
 
   const openNew = () => {
     setProduct(emptyProduct);
-    setSubmitted(false);
+    setMarkdown("")
     setProductDialog(true);
     setPreloaded(false);
   }
 
   const hideDialog = () => {
-    setSubmitted(false);
     setProductDialog(false);
+    setMarkdown("")
   }
 
   const hideDeleteProductDialog = () => {
@@ -156,19 +181,23 @@ export default function Home() {
   }
 
   const saveProduct = async () => {
-    setSubmitted(true);
     if (preloaded) {
       updateProduct();
     }
     else {
       await createProduct();
     }
+    uploadInstructionsMarkdown();
     setProductDialog(false);
     setProduct(emptyProduct);
+    setMarkdown("")
   }
+
+
 
   const editProduct = (product) => {
     setProduct({ ...product });
+    setMarkdownFromInstructions(product)
     setProductDialog(true);
     setPreloaded(true)
   }
@@ -310,7 +339,7 @@ export default function Home() {
 
 
   return (
-    <div className="datatable-crud-demo surface-card p-4 border-round shadow-2">
+    <div>
       <Toast ref={toast} />
 
       <div className="text-3xl text-800 font-bold mb-4">PrimeReact CRUD</div>
@@ -359,4 +388,3 @@ export default function Home() {
     </div>
   );
 }
-
