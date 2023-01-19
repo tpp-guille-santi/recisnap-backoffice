@@ -25,6 +25,7 @@
   "dependencies": {
     "@uiw/react-md-editor": "^3.20.2",
     "axios": "^1.2.2",
+    "encoding": "^0.1.13",
     "firebase": "^9.15.0",
     "json-loader": "^0.5.7",
     "next": "13.0.0",
