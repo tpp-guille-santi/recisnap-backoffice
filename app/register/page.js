@@ -7,7 +7,7 @@ import { InputText } from "primereact/inputtext";
 import { app } from "../firebase-config";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
-
+import { saveNewUser } from "../../utils/serverConnector";
 const RegisterPage = () => {
   const [name, setName] = useState();
   const [email, setEmail] = useState();
@@ -28,6 +28,12 @@ const RegisterPage = () => {
         // Signed in
         console.log("Signed In!");
         const user = userCredential.user;
+        const userInformationObject = {
+          "firebase-id": user.uid,
+          "user-name": name,
+          "user-password": password,
+        };
+        const exit = saveNewUser(userInformationObject);
         router.push("/homepage");
       })
       .catch((error) => {
@@ -47,22 +53,27 @@ const RegisterPage = () => {
             onChange={(e) => setName(e.target.value)}
             placeholder="Nombre y Apellido"
           />
+          <br></br>
           <InputText
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
           />
+          <br></br>
           <Password
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Contraseña"
           />
+          <br></br>
           <Password
+            style={{ marginTop: "1em" }}
             value={passwordRepeat}
             onChange={(e) => setPasswordRepeat(e.target.value)}
             placeholder="Repetir Contraseña"
           />
         </div>
+        <br></br>
         <div>
           <Button label="Registrarse" onClick={saveUser} />
         </div>
