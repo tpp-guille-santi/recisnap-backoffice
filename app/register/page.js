@@ -29,9 +29,10 @@ const RegisterPage = () => {
         console.log("Signed In!");
         const user = userCredential.user;
         const userInformationObject = {
-          "firebase-id": user.uid,
-          "user-name": name,
-          "user-password": password,
+          firebase_uid: user.uid,
+          name: name,
+          email: email,
+          password: password,
         };
         const exit = saveNewUser(userInformationObject);
         router.push("/homepage");
