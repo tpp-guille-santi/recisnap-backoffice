@@ -32,8 +32,9 @@ const LoginPage = () => {
         //Manejar Signup
         if (isNewUser) {
           const exit = saveNewUser({
-            "user-email": credentials.user.email,
-            "user-name": credentials.user.displayName,
+            firebase_uid: credentials.user.uid,
+            email: credentials.user.email,
+            name: credentials.user.displayName,
           });
         }
         //Manejar Login
