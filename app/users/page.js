@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { getUserList } from "../../utils/serverConnector";
+import { Button } from "primereact/button";
+
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
 
@@ -13,6 +15,18 @@ const UsersPage = () => {
   async function getUsers() {
     return getUserList();
   }
+
+  const actionsBody = () => {
+    return (
+      <div>
+        <Button
+          className="p-button-rounded"
+          icon="pi pi-pencil"
+          tooltip="Editar permisos"
+        />
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -48,6 +62,7 @@ const UsersPage = () => {
           header="Acciones"
           exportable={false}
           style={{ minWidth: "8rem" }}
+          body={actionsBody}
         ></Column>
       </DataTable>
     </div>
