@@ -10,6 +10,21 @@ const saveNewUser = async (body) => {
     .catch((error) => {
       console.log(error);
     });
+  return response;
 };
 
-export { saveNewUser };
+const getUserList = async () => {
+  const response = await axios
+    .get("https://peaceful-refuge-34158.herokuapp.com/users")
+    .then((response) => {
+      console.log(response);
+      return response.data;
+    })
+    .catch((e) => {
+      console.log(e);
+      return [];
+    });
+  return response;
+};
+
+export { saveNewUser, getUserList };

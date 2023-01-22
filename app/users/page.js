@@ -2,8 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import axios from "axios";
-
+import { getUserList } from "../../utils/serverConnector";
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
 
@@ -12,15 +11,7 @@ const UsersPage = () => {
   }, []);
 
   async function getUsers() {
-    try {
-      const response = await axios.get(
-        "https://peaceful-refuge-34158.herokuapp.com/users"
-      );
-      return response.data;
-    } catch (e) {
-      console.log(e);
-      return [];
-    }
+    return getUserList();
   }
 
   return (
