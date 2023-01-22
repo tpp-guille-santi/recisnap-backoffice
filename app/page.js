@@ -31,6 +31,7 @@ const LoginPage = () => {
         const isNewUser = getAdditionalUserInfo(credentials).isNewUser;
         //Manejar Signup
         if (isNewUser) {
+          console.log("New User");
           const exit = saveNewUser({
             firebase_uid: credentials.user.uid,
             email: credentials.user.email,
