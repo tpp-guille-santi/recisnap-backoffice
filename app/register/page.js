@@ -25,14 +25,12 @@ const RegisterPage = () => {
     }
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in
-        console.log("Signed In!");
+        console.log("Signed Up!");
         const user = userCredential.user;
         const userInformationObject = {
           firebase_uid: user.uid,
           name: name,
           email: email,
-          password: password,
         };
         const exit = saveNewUser(userInformationObject);
         router.push("/homepage");
