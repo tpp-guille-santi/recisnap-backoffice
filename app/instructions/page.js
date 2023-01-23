@@ -74,7 +74,10 @@ export default function Home() {
   const setMarkdownFromInstructions = async (product) => {
     let markdown = templateMarkdown
     try {
-      markdown = await getMarkdown(`/markdowns/${encodeURI(getFilename(product))}.md`)
+      const potentialMarkdown = await getMarkdown(`/markdowns/${encodeURI(getFilename(product))}.md`)
+      if (potentialMarkdown != null && potentialMarkdown.trim() !== ''){
+        markdown = potentialMarkdown;
+      }
     } catch (e) {
       console.log(e);
     }
