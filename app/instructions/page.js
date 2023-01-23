@@ -35,10 +35,23 @@ export default function Home() {
   const [selectedProducts, setSelectedProducts] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [markdown, setMarkdown] = useState('');
+  const [templateMarkdown, setTemplateMarkdown] = useState('');
   const toast = useRef(null);
   const dt = useRef(null);
 
+  const getMarkdown = async (file) => {
+    const storageRef = ref(storage, file);
+    const bytes = await getBytes(storageRef);
+    return new TextDecoder().decode(bytes);
+  }
 
+  const getTemplateMarkdown = async (product) => {
+    try {
+      return getMarkdown(`/markdowns/template.md`)
+    } catch (e) {
+      return '';
+    }
+  }
 
   const storage = getStorage(app);
 
@@ -59,14 +72,13 @@ export default function Home() {
   }
 
   const setMarkdownFromInstructions = async (product) => {
+    let markdown = templateMarkdown
     try {
-      const storageRef = ref(storage, `/markdowns/${encodeURI(getFilename(product))}.md`);
-      const bytes = await getBytes(storageRef);
-      const storedMarkdown = new TextDecoder().decode(bytes);
-      setMarkdown(storedMarkdown);
+      markdown = await getMarkdown(`/markdowns/${encodeURI(getFilename(product))}.md`)
     } catch (e) {
-      setMarkdown('');
+      console.log(e);
     }
+    setMarkdown(markdown);
   }
 
   const setMaterial = (argument) => {
@@ -126,13 +138,14 @@ export default function Home() {
   useEffect(() => {
     getInstructions().then(data => setProducts(data));
     getMaterials().then(data => setMaterials(data));
+    getTemplateMarkdown().then(data => setTemplateMarkdown(data));
   }, []);
 
 
 
   const openNew = () => {
     setProduct(emptyProduct);
-    setMarkdown("")
+    setMarkdown(templateMarkdown)
     setProductDialog(true);
     setPreloaded(false);
   }
