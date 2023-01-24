@@ -20,8 +20,6 @@ const UsersPage = () => {
   const permissionsColumnBody = (rowData) => {
     var permissions =
       rowData["permissions"] !== null ? rowData.permissions : [];
-    console.log(rowData);
-    console.log(permissions);
     return (
       <div>
         <PermissionIcon

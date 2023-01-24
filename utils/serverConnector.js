@@ -14,17 +14,15 @@ const saveNewUser = async (body) => {
 };
 
 const getUserList = async () => {
-  const response = await axios
-    .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`)
-    .then((response) => {
-      console.log(response);
-      return response.data;
-    })
-    .catch((e) => {
-      console.log(e);
-      return [];
-    });
-  return response;
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users`
+    );
+    return response.data;
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
 };
 
 export { saveNewUser, getUserList };
