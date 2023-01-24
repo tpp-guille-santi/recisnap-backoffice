@@ -4,6 +4,7 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { getUserList } from "../../utils/serverConnector";
 import { Button } from "primereact/button";
+import PermissionIcon from "../../components/permissionIcon.js";
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -15,6 +16,48 @@ const UsersPage = () => {
   async function getUsers() {
     return getUserList();
   }
+
+  const permissionsColumnBody = (rowData) => {
+    return (
+      <div>
+        <PermissionIcon
+          permission={false}
+          tooltip="Ver documento"
+          icon={"pi pi-eye"}
+        />
+        <PermissionIcon
+          permission={true}
+          tooltip="Nuevo documento"
+          icon={"pi pi-plus"}
+        />
+        <PermissionIcon
+          permission={false}
+          tooltip="Blockear documento"
+          icon={"pi pi-stop-circle"}
+        />
+        <PermissionIcon
+          permission={true}
+          tooltip="Editar documento"
+          icon={"pi pi-file-edit"}
+        />
+        <PermissionIcon
+          permission={false}
+          tooltip="Editar usuario"
+          icon={"pi pi-user-edit"}
+        />
+        <PermissionIcon
+          permission={true}
+          tooltip="Ver usuario"
+          icon={"pi pi-user"}
+        />
+        <PermissionIcon
+          permission={false}
+          tooltip="Borrar permisos"
+          icon={"pi pi-eraser"}
+        />
+      </div>
+    );
+  };
 
   const actionsBody = () => {
     return (
@@ -41,12 +84,6 @@ const UsersPage = () => {
         responsiveLayout="scroll"
       >
         <Column
-          field="id"
-          header="ID"
-          sortable
-          style={{ minWidth: "8rem" }}
-        ></Column>
-        <Column
           field="email"
           header="Email"
           sortable
@@ -57,6 +94,12 @@ const UsersPage = () => {
           header="Nombre"
           sortable
           style={{ minWidth: "16rem" }}
+        ></Column>
+        <Column
+          header="Permisos"
+          sortable
+          style={{ minWidth: "16rem" }}
+          body={permissionsColumnBody}
         ></Column>
         <Column
           header="Acciones"
