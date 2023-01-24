@@ -15,7 +15,7 @@ const saveNewUser = async (body) => {
 
 const getUserList = async () => {
   const response = await axios
-    .get("https://peaceful-refuge-34158.herokuapp.com/users")
+    .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`)
     .then((response) => {
       console.log(response);
       return response.data;

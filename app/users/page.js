@@ -18,40 +18,44 @@ const UsersPage = () => {
   }
 
   const permissionsColumnBody = (rowData) => {
+    var permissions =
+      rowData["permissions"] !== null ? rowData.permissions : [];
+    console.log(rowData);
+    console.log(permissions);
     return (
       <div>
         <PermissionIcon
-          permission={false}
+          permission={permissions.includes("view_pages")}
           tooltip="Ver documento"
           icon={"pi pi-eye"}
         />
         <PermissionIcon
-          permission={true}
+          permission={permissions.includes("create_page")}
           tooltip="Nuevo documento"
           icon={"pi pi-plus"}
         />
         <PermissionIcon
-          permission={false}
+          permission={permissions.includes("block_page")}
           tooltip="Blockear documento"
           icon={"pi pi-stop-circle"}
         />
         <PermissionIcon
-          permission={true}
+          permission={permissions.includes("edit_page")}
           tooltip="Editar documento"
           icon={"pi pi-file-edit"}
         />
         <PermissionIcon
-          permission={false}
-          tooltip="Editar usuario"
+          permission={permissions.includes("grant_permissions")}
+          tooltip="Dar permisos"
           icon={"pi pi-user-edit"}
         />
         <PermissionIcon
-          permission={true}
+          permission={permissions.includes("view_users")}
           tooltip="Ver usuario"
           icon={"pi pi-user"}
         />
         <PermissionIcon
-          permission={false}
+          permission={permissions.includes("remove_permissions")}
           tooltip="Borrar permisos"
           icon={"pi pi-eraser"}
         />
