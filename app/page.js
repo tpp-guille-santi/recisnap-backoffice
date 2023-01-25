@@ -1,20 +1,20 @@
-"use client";
-import React, { useEffect, useRef, useState } from "react";
+'use client';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
-  getAdditionalUserInfo,
-} from "firebase/auth";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
-import { Password } from "primereact/password";
-import { app } from "./firebase-config";
-import { Card } from "primereact/card";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { saveNewUser } from "../utils/serverConnector";
+  getAdditionalUserInfo
+} from 'firebase/auth';
+import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
+import { Password } from 'primereact/password';
+import { app } from './firebase-config';
+import { Card } from 'primereact/card';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { saveNewUser, getUserById } from '../utils/serverConnector';
 
 const LoginPage = () => {
   const [value1, setValue1] = useState();
@@ -25,25 +25,26 @@ const LoginPage = () => {
   const router = useRouter();
 
   const signInWithGoogle = async () => {
-    console.log("Login In Google");
+    console.log('Login In Google');
     const res = await signInWithPopup(auth, googleProvider)
-      .then((credentials) => {
+      .then(credentials => {
         const isNewUser = getAdditionalUserInfo(credentials).isNewUser;
         //Manejar Signup
         if (isNewUser) {
-          console.log("New User");
+          console.log('New User');
           const exit = saveNewUser({
             firebase_uid: credentials.user.uid,
             email: credentials.user.email,
-            name: credentials.user.displayName,
+            name: credentials.user.displayName
           });
+        } else {
+          //Manejar Login
+          const userInformation = getUserById(credentials.user.uid);
         }
-        //Manejar Login
-        //
-        console.log("Login Exitoso");
-        router.push("/homepage");
+        console.log('Login Exitoso');
+        router.push('/homepage');
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(err);
         alert(err.message);
         /*
@@ -61,15 +62,16 @@ const LoginPage = () => {
   };
 
   const signInWithEmail = (email, password) => {
-    console.log("Loging in");
+    console.log('Loging in');
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log("Success");
+      .then(userCredential => {
+        console.log('Success');
         // Signed in
         const user = userCredential.user;
-        router.push("/homepage");
+        const userInformation = getUserById(user.uid);
+        router.push('/homepage');
       })
-      .catch((error) => {
+      .catch(error => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
@@ -81,18 +83,18 @@ const LoginPage = () => {
       <h1>Recisnap!</h1>
       <div>
         <Card
-          style={{ width: "25rem", marginBottom: "1em", borderStyle: "double" }}
+          style={{ width: '25rem', marginBottom: '1em', borderStyle: 'double' }}
         >
           <div>
             <InputText
               value={value1}
-              onChange={(e) => setValue1(e.target.value)}
+              onChange={e => setValue1(e.target.value)}
               placeholder="Email"
             />
             <Password
-              style={{ marginTop: "1em", marginBottom: "1em" }}
+              style={{ marginTop: '1em', marginBottom: '1em' }}
               value={value2}
-              onChange={(e) => setValue2(e.target.value)}
+              onChange={e => setValue2(e.target.value)}
               placeholder="Contraseña"
             />
           </div>
@@ -107,7 +109,7 @@ const LoginPage = () => {
           <br></br>
           <hr></hr>
           <Button
-            style={{ marginTop: "1em", marginBottom: "1em" }}
+            style={{ marginTop: '1em', marginBottom: '1em' }}
             label="Entrar con Google"
             onClick={signInWithGoogle}
           />
@@ -117,10 +119,10 @@ const LoginPage = () => {
         </Card>
       </div>
       <Card
-        style={{ width: "25rem", marginBottom: "1em", borderStyle: "double" }}
+        style={{ width: '25rem', marginBottom: '1em', borderStyle: 'double' }}
       >
         <div>
-          No tenes cuenta?{" "}
+          No tenes cuenta?{' '}
           <Link href="/register">Hace click para registrarte!</Link>
         </div>
       </Card>

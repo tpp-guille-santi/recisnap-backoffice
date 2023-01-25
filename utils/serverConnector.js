@@ -1,13 +1,13 @@
-import axios from "axios";
+import axios from 'axios';
 
-const saveNewUser = async (body) => {
+const saveNewUser = async body => {
   const response = await axios
     .post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, body)
-    .then((response) => {
+    .then(response => {
       console.log(response);
       return response.code == 201;
     })
-    .catch((error) => {
+    .catch(error => {
       console.log(error);
     });
   return response;
@@ -25,4 +25,20 @@ const getUserList = async () => {
   }
 };
 
-export { saveNewUser, getUserList };
+const getUserById = async firebaseId => {
+  try {
+    /*const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}`
+    );*/
+    const response = await axios.get(
+      'https://peaceful-refuge-34158.herokuapp.com/users/' + firebaseId
+    );
+    console.log(response);
+    return response;
+  } catch (e) {
+    console.log(e);
+    return {};
+  }
+};
+
+export { saveNewUser, getUserList, getUserById };
