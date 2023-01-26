@@ -33,7 +33,6 @@ const getUserById = async firebaseId => {
     const response = await axios.get(
       'https://peaceful-refuge-34158.herokuapp.com/users/' + firebaseId
     );
-    console.log(response);
     return response;
   } catch (e) {
     console.log(e);

@@ -15,6 +15,8 @@ import { Card } from 'primereact/card';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { saveNewUser, getUserById } from '../utils/serverConnector';
+import UserSession from '../utils/userSession';
+import UserProfile from '../utils/userSession';
 
 const LoginPage = () => {
   const [value1, setValue1] = useState();
@@ -25,13 +27,11 @@ const LoginPage = () => {
   const router = useRouter();
 
   const signInWithGoogle = async () => {
-    console.log('Login In Google');
     const res = await signInWithPopup(auth, googleProvider)
       .then(credentials => {
         const isNewUser = getAdditionalUserInfo(credentials).isNewUser;
-        //Manejar Signup
         if (isNewUser) {
-          console.log('New User');
+          //Manejar Signup
           const exit = saveNewUser({
             firebase_uid: credentials.user.uid,
             email: credentials.user.email,
@@ -40,8 +40,8 @@ const LoginPage = () => {
         } else {
           //Manejar Login
           const userInformation = getUserById(credentials.user.uid);
+          UserSession.setUser(userInformation);
         }
-        console.log('Login Exitoso');
         router.push('/homepage');
       })
       .catch(err => {
@@ -62,13 +62,12 @@ const LoginPage = () => {
   };
 
   const signInWithEmail = (email, password) => {
-    console.log('Loging in');
     signInWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
-        console.log('Success');
         // Signed in
         const user = userCredential.user;
         const userInformation = getUserById(user.uid);
+        UserSession.setUser(userInformation);
         router.push('/homepage');
       })
       .catch(error => {
