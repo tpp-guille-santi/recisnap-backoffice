@@ -37,12 +37,17 @@ const LoginPage = () => {
             email: credentials.user.email,
             name: credentials.user.displayName
           });
-        } else {
-          //Manejar Login
-          const userInformation = getUserById(credentials.user.uid);
-          UserSession.setUser(userInformation);
         }
-        router.push('/homepage');
+        //Manejar Login
+        getUserById(credentials.user.uid)
+          .then(userInformation => {
+            UserSession.setUser(userInformation);
+            router.push('/homepage');
+          })
+          .catch(e => {
+            console.log(e);
+          });
+        //        router.push('/homepage');
       })
       .catch(err => {
         console.error(err);
