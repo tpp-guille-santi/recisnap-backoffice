@@ -26,18 +26,12 @@ const getUserList = async () => {
 };
 
 const getUserById = async firebaseId => {
-  try {
-    /*const response = await axios.get(
+  /*const response = await axios.get(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}`
     );*/
-    const response = await axios.get(
-      'https://peaceful-refuge-34158.herokuapp.com/users/' + firebaseId
-    );
-    return response;
-  } catch (e) {
-    console.log(e);
-    return {};
-  }
+  return await axios.get(
+    'https://peaceful-refuge-34158.herokuapp.com/users/' + firebaseId
+  );
 };
 
 export { saveNewUser, getUserList, getUserById };

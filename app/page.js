@@ -66,9 +66,14 @@ const LoginPage = () => {
       .then(userCredential => {
         // Signed in
         const user = userCredential.user;
-        const userInformation = getUserById(user.uid);
-        UserSession.setUser(userInformation);
-        router.push('/homepage');
+        getUserById(user.uid)
+          .then(userInformation => {
+            UserSession.setUser(userInformation);
+            router.push('/homepage');
+          })
+          .catch(e => {
+            console.log(e);
+          });
       })
       .catch(error => {
         const errorCode = error.code;
