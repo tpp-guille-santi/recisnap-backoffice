@@ -1,9 +1,10 @@
-"use client";
-import React from "react";
-import DropdownFilter from "../../components/dropdownFilter";
+'use client';
+import React from 'react';
+import DropdownFilter from '../../components/dropdownFilter';
+import UserSession from '../../utils/userSession';
 
 const Homepage = () => {
-  const nullFunction = (argument) => {
+  const nullFunction = argument => {
     return;
   };
 
@@ -16,6 +17,10 @@ const Homepage = () => {
         departamento={nullFunction}
         municipio={nullFunction}
       ></DropdownFilter>
+      <div>
+        The name is: '{UserSession.getUser().name}' and my email is '
+        {UserSession.getUser().email}'
+      </div>
     </div>
   );
 };
