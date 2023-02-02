@@ -30,7 +30,7 @@ const getUserById = async firebaseId => {
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}`
     );*/
   return await axios.get(
-    'https://peaceful-refuge-34158.herokuapp.com/users/' + firebaseId
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}`
   );
 };
 
