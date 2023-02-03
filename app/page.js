@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import { saveNewUser, getUserById } from '../utils/serverConnector';
 import UserSession from '../utils/userSession';
 import UserProfile from '../utils/userSession';
+import { ReactSession } from 'react-client-session';
 
 const LoginPage = () => {
   const [value1, setValue1] = useState();
@@ -25,7 +26,7 @@ const LoginPage = () => {
   const auth = getAuth(app);
   const googleProvider = new GoogleAuthProvider();
   const router = useRouter();
-
+  ReactSession.setStoreType('localStorage');
   const signInWithGoogle = async () => {
     const res = await signInWithPopup(auth, googleProvider)
       .then(credentials => {
