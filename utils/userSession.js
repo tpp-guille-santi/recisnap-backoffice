@@ -6,10 +6,10 @@ const UserSession = (function () {
   const [userFirebaseUid, setUserFirebaseUid] = useState('');
   const [userPermissions, setUserPermissions] = useState([]);*/
 
-  var name = '';
-  var email = '';
-  var firebaseUid = '';
-  var permissions = [];
+  let name = '';
+  let email = '';
+  let firebaseUid = '';
+  let myPerm = [];
 
   const setUser = userInformation => {
     const user = userInformation.data;
@@ -17,7 +17,7 @@ const UserSession = (function () {
     self.name = user.name;
     self.email = user.email;
     self.firebaseUid = user.firebase_uid;
-    self.permissions = user.userPermissions;
+    self.myPerm = user.permissions;
   };
 
   const getUser = () => {
@@ -25,11 +25,20 @@ const UserSession = (function () {
       name: self.name,
       email: self.email,
       firebaseUid: self.firebaseUid,
-      permissions: self.permissions
+      permissions: self.myPerm
     };
   };
 
-  return { setUser: setUser, getUser: getUser };
+  const canEditPermissions = () => {
+    console.log(myPerm);
+    return myPerm.includes('grant_permissions');
+  };
+
+  return {
+    setUser: setUser,
+    getUser: getUser,
+    canEditPermissions: canEditPermissions
+  };
 })();
 
 export default UserSession;

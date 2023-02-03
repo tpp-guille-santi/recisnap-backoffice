@@ -21,6 +21,7 @@ const Homepage = () => {
         The name is: '{UserSession.getUser().name}' and my email is '
         {UserSession.getUser().email}'
       </div>
+      <div>{JSON.stringify(UserSession.getUser())}</div>
     </div>
   );
 };
