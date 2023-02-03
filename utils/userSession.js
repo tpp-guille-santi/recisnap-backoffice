@@ -21,6 +21,9 @@ const UserSession = (function () {
 
   const canEditPermissions = () => {
     const permissions = ReactSession.get('permissions');
+    if (permissions === undefined) {
+      return false;
+    }
     return permissions.includes('grant_permissions');
   };
 
