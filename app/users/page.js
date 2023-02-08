@@ -4,11 +4,13 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { getUserList } from '../../utils/serverConnector';
 import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
 import PermissionIcon from '../../components/permissionIcon.js';
 import UserSession from '../../utils/userSession';
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
+  const [dialogVisibility, setDialogVisibility] = useState(false);
 
   useEffect(() => {
     getUsers().then(data => setUsers(data));
@@ -62,7 +64,15 @@ const UsersPage = () => {
     );
   };
 
-  const actionsBody = () => {
+  const editUserPermissions = permissions => {
+    return (
+      <div>
+        <Dialog>Dialog</Dialog>
+      </div>
+    );
+  };
+
+  const actionsBody = rowData => {
     return (
       <div>
         <Button
@@ -70,6 +80,11 @@ const UsersPage = () => {
           icon="pi pi-pencil"
           tooltip="Editar permisos"
           disabled={!UserSession.canEditPermissions()}
+          //disabled={false}
+          onClick={() => {
+            console.log(rowData.permissions);
+            setDialogVisibility(true);
+          }}
         />
       </div>
     );
@@ -77,6 +92,14 @@ const UsersPage = () => {
 
   return (
     <div>
+      <div>
+        <Dialog
+          visible={dialogVisibility}
+          onHide={() => setDialogVisibility(false)}
+        >
+          Dialog
+        </Dialog>
+      </div>
       <DataTable
         value={users}
         dataKey="id"
