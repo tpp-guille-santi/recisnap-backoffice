@@ -7,6 +7,7 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import PermissionIcon from '../../components/permissionIcon.js';
 import UserSession from '../../utils/userSession';
+import TogglableEntry from '../../components/permissions/togglableEntry';
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -96,8 +97,12 @@ const UsersPage = () => {
         <Dialog
           visible={dialogVisibility}
           onHide={() => setDialogVisibility(false)}
+          style={{ width: '50vw' }}
         >
           Dialog
+          <div>
+            <TogglableEntry></TogglableEntry>
+          </div>
         </Dialog>
       </div>
       <DataTable
