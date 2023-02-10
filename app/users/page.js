@@ -4,10 +4,9 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { getUserList } from '../../utils/serverConnector';
 import { Button } from 'primereact/button';
-import { Dialog } from 'primereact/dialog';
 import PermissionIcon from '../../components/permissionIcon.js';
 import UserSession from '../../utils/userSession';
-import TogglableEntry from '../../components/permissions/togglableEntry';
+import EditPermissionsDialog from '../../components/permissions/editPermissionsDialog.js';
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -56,19 +55,6 @@ const UsersPage = () => {
           tooltip="Ver usuario"
           icon={'pi pi-user'}
         />
-        <PermissionIcon
-          permission={permissions.includes('remove_permissions')}
-          tooltip="Borrar permisos"
-          icon={'pi pi-eraser'}
-        />
-      </div>
-    );
-  };
-
-  const editUserPermissions = permissions => {
-    return (
-      <div>
-        <Dialog>Dialog</Dialog>
       </div>
     );
   };
@@ -80,8 +66,8 @@ const UsersPage = () => {
           className="p-button-rounded"
           icon="pi pi-pencil"
           tooltip="Editar permisos"
-          disabled={!UserSession.canEditPermissions()}
-          //disabled={false}
+          //disabled={!UserSession.canEditPermissions()}
+          disabled={false}
           onClick={() => {
             console.log(rowData.permissions);
             setDialogVisibility(true);
@@ -94,16 +80,10 @@ const UsersPage = () => {
   return (
     <div>
       <div>
-        <Dialog
-          visible={dialogVisibility}
-          onHide={() => setDialogVisibility(false)}
-          style={{ width: '50vw' }}
-        >
-          Dialog
-          <div>
-            <TogglableEntry></TogglableEntry>
-          </div>
-        </Dialog>
+        <EditPermissionsDialog
+          visibility={dialogVisibility}
+          setVisibility={setDialogVisibility}
+        ></EditPermissionsDialog>
       </div>
       <DataTable
         value={users}
