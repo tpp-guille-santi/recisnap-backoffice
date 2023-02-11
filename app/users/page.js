@@ -61,6 +61,12 @@ const UsersPage = () => {
     );
   };
 
+  const closeDialog = () => {
+    console.log('Close dialog');
+    setDialogVisibility(false);
+    getUsers().then(data => setUsers(data));
+  };
+
   const actionsBody = rowData => {
     return (
       <div>
@@ -88,7 +94,7 @@ const UsersPage = () => {
       <div>
         <EditPermissionsDialog
           visibility={dialogVisibility}
-          setVisibility={setDialogVisibility}
+          close={closeDialog}
           permissions={currentPermissions}
           editedUser={editedUserId}
         ></EditPermissionsDialog>

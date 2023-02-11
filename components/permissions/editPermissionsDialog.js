@@ -43,13 +43,14 @@ const EditPermissionsDialog = props => {
     if (canEditPermissions) userNewPermissions.push('view_users');
     console.log(userNewPermissions);
     updateUserPermissions(props.editedUser, userNewPermissions);
+    props.close();
   };
 
   return (
     <div>
       <Dialog
         visible={props.visibility}
-        onHide={() => props.setVisibility(false)}
+        onHide={() => props.close()}
         style={{ width: '50vw' }}
       >
         <div>
