@@ -12,6 +12,7 @@ const UsersPage = () => {
   const [users, setUsers] = useState([]);
   const [dialogVisibility, setDialogVisibility] = useState(false);
   const [currentPermissions, setCurrentPermissions] = useState([]);
+  const [editedUserId, setEditedUserId] = useState('');
 
   useEffect(() => {
     getUsers().then(data => setUsers(data));
@@ -73,6 +74,9 @@ const UsersPage = () => {
             console.log(rowData.permissions);
             setDialogVisibility(true);
             setCurrentPermissions(rowData.permissions);
+            setEditedUserId(rowData['firebase_uid']);
+            //console.log(rowData);
+            //console.log(editedUserId);
           }}
         />
       </div>
@@ -86,6 +90,7 @@ const UsersPage = () => {
           visibility={dialogVisibility}
           setVisibility={setDialogVisibility}
           permissions={currentPermissions}
+          editedUser={editedUserId}
         ></EditPermissionsDialog>
       </div>
       <DataTable

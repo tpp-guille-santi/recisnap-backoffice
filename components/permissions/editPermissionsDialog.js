@@ -2,6 +2,7 @@ import { React, useEffect, useState } from 'react';
 import TogglableEntry from './togglableEntry';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
+import { updateUserPermissions } from '../../utils/serverConnector';
 
 const EditPermissionsDialog = props => {
   const [canViewDocument, setCanViewDocument] = useState(false);
@@ -23,6 +24,26 @@ const EditPermissionsDialog = props => {
   /*useEffect(() => {
     setCanViewDocument(props.permissions.includes('view_pages'));
   }, [props.permissions]);*/
+
+  const saveNewPermissions = () => {
+    let userNewPermissions = [];
+    console.log({
+      viewDoc: canViewDocument,
+      block: canBlockDocument,
+      newDocs: canCreateDocument,
+      editDoc: canEditDocument,
+      users: canViewUsers,
+      permi: canEditPermissions
+    });
+    if (canViewDocument) userNewPermissions.push('view_pages');
+    if (canCreateDocument) userNewPermissions.push('create_page');
+    if (canBlockDocument) userNewPermissions.push('block_page');
+    if (canEditDocument) userNewPermissions.push('edit_page');
+    if (canViewUsers) userNewPermissions.push('grant_permissions');
+    if (canEditPermissions) userNewPermissions.push('view_users');
+    console.log(userNewPermissions);
+    updateUserPermissions(props.editedUser, userNewPermissions);
+  };
 
   return (
     <div>
@@ -76,18 +97,7 @@ const EditPermissionsDialog = props => {
           </div>
         </div>
         <div>
-          <Button
-            onClick={() => {
-              console.log({
-                viewDoc: canViewDocument,
-                block: canBlockDocument,
-                newDocs: canCreateDocument,
-                editDoc: canEditDocument,
-                users: canViewUsers,
-                permi: canEditPermissions
-              });
-            }}
-          ></Button>
+          <Button onClick={() => saveNewPermissions()}>Guardar</Button>
         </div>
       </Dialog>
     </div>
