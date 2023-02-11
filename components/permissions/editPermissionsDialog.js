@@ -1,5 +1,4 @@
-'use client';
-import { React, useState } from 'react';
+import { React, useEffect, useState } from 'react';
 import TogglableEntry from './togglableEntry';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
@@ -10,7 +9,20 @@ const EditPermissionsDialog = props => {
   const [canEditDocument, setCanEditDocument] = useState(false);
   const [canBlockDocument, setCanBlockDocument] = useState(false);
   const [canEditPermissions, setCanEditPermissions] = useState(false);
-  const [canViewUsers, setCanViewUsers] = useState();
+  const [canViewUsers, setCanViewUsers] = useState(false);
+
+  useEffect(() => {
+    setCanViewDocument(props.permissions.includes('view_pages'));
+    setCanCreateDocument(props.permissions.includes('create_page'));
+    setCanBlockDocument(props.permissions.includes('block_page'));
+    setCanEditDocument(props.permissions.includes('edit_page'));
+    setCanEditPermissions(props.permissions.includes('grant_permissions'));
+    setCanViewUsers(props.permissions.includes('view_users'));
+  }, [props.permissions]);
+
+  /*useEffect(() => {
+    setCanViewDocument(props.permissions.includes('view_pages'));
+  }, [props.permissions]);*/
 
   return (
     <div>
