@@ -11,6 +11,7 @@ import EditPermissionsDialog from '../../components/permissions/editPermissionsD
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
   const [dialogVisibility, setDialogVisibility] = useState(false);
+  const [currentPermissions, setCurrentPermissions] = useState([]);
 
   useEffect(() => {
     getUsers().then(data => setUsers(data));
@@ -71,6 +72,7 @@ const UsersPage = () => {
           onClick={() => {
             console.log(rowData.permissions);
             setDialogVisibility(true);
+            setCurrentPermissions(rowData.permissions);
           }}
         />
       </div>
@@ -83,6 +85,7 @@ const UsersPage = () => {
         <EditPermissionsDialog
           visibility={dialogVisibility}
           setVisibility={setDialogVisibility}
+          permissions={currentPermissions}
         ></EditPermissionsDialog>
       </div>
       <DataTable
