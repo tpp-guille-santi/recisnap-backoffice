@@ -25,7 +25,7 @@ const EditPermissionsDialog = props => {
     setCanViewDocument(props.permissions.includes('view_pages'));
   }, [props.permissions]);*/
 
-  const saveNewPermissions = () => {
+  const saveNewPermissions = async () => {
     let userNewPermissions = [];
     console.log({
       viewDoc: canViewDocument,
@@ -42,7 +42,10 @@ const EditPermissionsDialog = props => {
     if (canViewUsers) userNewPermissions.push('grant_permissions');
     if (canEditPermissions) userNewPermissions.push('view_users');
     console.log(userNewPermissions);
-    updateUserPermissions(props.editedUser, userNewPermissions);
+    const response = await updateUserPermissions(
+      props.editedUser,
+      userNewPermissions
+    );
     props.close();
   };
 

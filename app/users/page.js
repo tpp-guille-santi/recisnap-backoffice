@@ -74,8 +74,8 @@ const UsersPage = () => {
           className="p-button-rounded"
           icon="pi pi-pencil"
           tooltip="Editar permisos"
-          //disabled={!UserSession.canEditPermissions()}
-          disabled={false}
+          disabled={!UserSession.canEditPermissions()}
+          //disabled={false}
           onClick={() => {
             console.log(rowData.permissions);
             setDialogVisibility(true);
