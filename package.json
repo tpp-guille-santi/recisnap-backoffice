@@ -34,6 +34,7 @@
     "primeicons": "^6.0.1",
     "primereact": "^8.7.3",
     "react": "18.2.0",
+    "react-client-session": "^0.0.8",
     "react-dom": "18.2.0",
     "react-firebase-hooks": "^5.1.1",
     "react-hook-form": "^7.42.1",

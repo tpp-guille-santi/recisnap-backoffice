@@ -34,4 +34,15 @@ const getUserById = async firebaseId => {
   );
 };
 
-export { saveNewUser, getUserList, getUserById };
+const updateUserPermissions = async (userId, permissions) => {
+  try {
+    const response = await axios.patch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`,
+      { permissions: permissions }
+    );
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export { saveNewUser, getUserList, getUserById, updateUserPermissions };

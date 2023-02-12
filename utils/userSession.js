@@ -1,35 +1,37 @@
-import { useState } from 'react';
+import { ReactSession } from 'react-client-session';
 
 const UserSession = (function () {
-  /*const [userName, setUserName] = useState('');
-  const [userEmail, setUserEmail] = useState('');
-  const [userFirebaseUid, setUserFirebaseUid] = useState('');
-  const [userPermissions, setUserPermissions] = useState([]);*/
-
-  var name = '';
-  var email = '';
-  var firebaseUid = '';
-  var permissions = [];
-
   const setUser = userInformation => {
     const user = userInformation.data;
     console.log(user);
-    self.name = user.name;
-    self.email = user.email;
-    self.firebaseUid = user.firebase_uid;
-    self.permissions = user.userPermissions;
+    ReactSession.set('user', user.name);
+    ReactSession.set('email', user.email);
+    ReactSession.set('firebaseUid', user.firebase_uid);
+    ReactSession.set('permissions', user.permissions);
   };
 
   const getUser = () => {
     return {
-      name: self.name,
-      email: self.email,
-      firebaseUid: self.firebaseUid,
-      permissions: self.permissions
+      name: ReactSession.get('user'),
+      email: ReactSession.get('email'),
+      firebaseUid: ReactSession.get('firebaseUid'),
+      permissions: ReactSession.get('permissions')
     };
   };
 
-  return { setUser: setUser, getUser: getUser };
+  const canEditPermissions = () => {
+    const permissions = ReactSession.get('permissions');
+    if (permissions === undefined) {
+      return false;
+    }
+    return permissions.includes('grant_permissions');
+  };
+
+  return {
+    setUser: setUser,
+    getUser: getUser,
+    canEditPermissions: canEditPermissions
+  };
 })();
 
 export default UserSession;
