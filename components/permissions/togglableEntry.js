@@ -11,12 +11,13 @@ const TogglableEntry = props => {
   };
 
   return (
-    <div>
-      <label>{props.label}</label>
+    <div style={{ marginTop: '1em', marginBottom: '1em' }}>
       <ToggleButton
         checked={checked}
         onChange={e => onChangeValue(e.value)}
+        style={{ marginRight: '10px', height: '30px' }}
       ></ToggleButton>
+      <label>{props.label}</label>
     </div>
   );
 };

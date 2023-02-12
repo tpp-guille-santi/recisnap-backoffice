@@ -52,6 +52,7 @@ const EditPermissionsDialog = props => {
         visible={props.visibility}
         onHide={() => props.close()}
         style={{ width: '50vw' }}
+        header="Permisos del usuario"
       >
         <div>
           <div>
@@ -98,7 +99,12 @@ const EditPermissionsDialog = props => {
           </div>
         </div>
         <div>
-          <Button onClick={() => saveNewPermissions()}>Guardar</Button>
+          <Button
+            onClick={() => saveNewPermissions()}
+            style={{ marginTop: '1em' }}
+          >
+            Guardar cambios
+          </Button>
         </div>
       </Dialog>
     </div>
