@@ -10,13 +10,14 @@ import { Toast } from 'primereact/toast';
 import { app } from '../firebase-config';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { saveNewUser } from '../../utils/serverConnector';
+import { saveNewUser, getUserById } from '../../utils/serverConnector';
 import {
   emailValidator,
   nameValidator,
   passwordValidator,
   confirmPasswordValidator
 } from '../../utils/validators';
+import UserSession from '../../utils/userSession';
 
 function HookForm() {
   const defaultValues = {
@@ -68,6 +69,9 @@ function HookForm() {
         detail: 'Created user successfully',
         life: 3000
       });
+      console.log('Creating Session');
+      const userInformation = await getUserById(user.uid);
+      UserSession.setUser(userInformation);
       router.push('/homepage');
     } catch (error) {
       console.log('Error sign in');
