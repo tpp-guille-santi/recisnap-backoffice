@@ -73,7 +73,7 @@ const UsersPage = () => {
     return (
       <div>
         <Button
-          className="p-button-rounded"
+          className="p-button-rounded m-1"
           icon="pi pi-pencil"
           tooltip="Editar permisos"
           disabled={!UserSession.canEditPermissions()}
@@ -118,24 +118,20 @@ const UsersPage = () => {
             field="email"
             header="Email"
             sortable
-            style={{ minWidth: '8rem' }}
           ></Column>
           <Column
             field="name"
             header="Nombre"
             sortable
-            style={{ minWidth: '16rem' }}
           ></Column>
           <Column
             header="Permisos"
             sortable
-            style={{ minWidth: '16rem' }}
             body={permissionsColumnBody}
           ></Column>
           <Column
             header="Acciones"
             exportable={false}
-            style={{ minWidth: '8rem' }}
             body={actionsBody}
           ></Column>
         </DataTable>

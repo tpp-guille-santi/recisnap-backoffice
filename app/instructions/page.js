@@ -68,7 +68,6 @@ export default function Home() {
   };
 
   const uploadInstructionsMarkdown = async () => {
-    // if (!markdown) return;
     try {
       const storageRef = ref(
         storage,
@@ -278,28 +277,6 @@ export default function Home() {
     });
   };
 
-  const findIndexById = id => {
-    let index = -1;
-    for (let i = 0; i < products.length; i++) {
-      if (products[i].id === id) {
-        index = i;
-        break;
-      }
-    }
-
-    return index;
-  };
-
-  const createId = () => {
-    let id = '';
-    let chars =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (let i = 0; i < 5; i++) {
-      id += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return id;
-  };
-
   const confirmDeleteSelected = () => {
     setDeleteProductsDialog(true);
   };
@@ -327,54 +304,22 @@ export default function Home() {
     });
   };
 
-  const capitalizeWords = words => {
-    if (!words) {
-      return '';
-    }
-    return words
-      .split(' ')
-      .map(word => {
-        return word[0].toUpperCase() + word.substring(1);
-      })
-      .join(' ');
-  };
-
-  const materialNameBodyTemplate = rowData => {
-    const material_name = rowData.material_name ?? '';
-    return capitalizeWords(material_name);
-  };
-
-  const municipioBodyTemplate = rowData => {
-    const municipio = rowData.municipio ?? '';
-    return capitalizeWords(municipio);
-  };
-
-  const provinciaBodyTemplate = rowData => {
-    const provincia = rowData.provincia ?? '';
-    return capitalizeWords(provincia);
-  };
-
-  const departamentoBodyTemplate = rowData => {
-    const departamento = rowData.departamento ?? '';
-    return capitalizeWords(departamento);
-  };
-
   const actionBodyTemplate = rowData => {
     return (
       <React.Fragment>
         <Button
           icon="pi pi-file"
-          className="p-button-rounded p-button-info mr-2"
+          className="p-button-rounded p-button-info m-1"
           onClick={() => viewProduct(rowData)}
         />
         <Button
           icon="pi pi-pencil"
-          className="p-button-rounded p-button-success mr-2"
+          className="p-button-rounded p-button-success m-1"
           onClick={() => editProduct(rowData)}
         />
         <Button
           icon="pi pi-trash"
-          className="p-button-rounded p-button-danger"
+          className="p-button-rounded p-button-danger m-1"
           onClick={() => confirmDeleteProduct(rowData)}
         />
       </React.Fragment>
@@ -481,49 +426,38 @@ export default function Home() {
         >
           <Column
             selectionMode="multiple"
-            headerStyle={{ width: '3rem' }}
             exportable={false}
           ></Column>
           <Column
-            field="material_name"
-            header="Material Name"
-            body={materialNameBodyTemplate}
-            sortable
-            style={{ minWidth: '16rem' }}
-          ></Column>
-          <Column
-            field="municipio"
-            header="Municipio"
-            body={municipioBodyTemplate}
-            sortable
-            style={{ minWidth: '8rem' }}
-          ></Column>
-          <Column
+            className="capitalize"
             field="provincia"
             header="Provincia"
-            body={provinciaBodyTemplate}
             sortable
-            style={{ minWidth: '16rem' }}
           ></Column>
           <Column
+            className="capitalize"
             field="departamento"
             header="Departamento"
-            body={departamentoBodyTemplate}
             sortable
-            style={{ minWidth: '16rem' }}
           ></Column>
-
           <Column
-            body={actionBodyTemplate}
-            exportable={false}
-            style={{ minWidth: '8rem' }}
+            className="capitalize"
+            field="municipio"
+            header="Municipio"
+            sortable
           ></Column>
+          <Column
+            className="capitalize"
+            field="material_name"
+            header="Material Name"
+            sortable
+          ></Column>
+          <Column body={actionBodyTemplate} exportable={false}></Column>
         </DataTable>
       </div>
       <Dialog
         visible={productDialog}
         breakpoints={{ '960px': '75vw', '640px': '100vw' }}
-        style={{ width: '100vw', height: '100vh' }}
         modal
         maximized={true}
         className="p-fluid"
@@ -545,7 +479,6 @@ export default function Home() {
       <Dialog
         visible={viewProductDialog}
         breakpoints={{ '960px': '75vw', '640px': '100vw' }}
-        style={{ width: '100vw', height: '100vh' }}
         modal
         maximized={true}
         className="p-fluid"
@@ -572,17 +505,13 @@ export default function Home() {
 
       <Dialog
         visible={deleteProductDialog}
-        style={{ width: '450px' }}
         header="Confirmar"
         modal
         footer={deleteProductDialogFooter}
         onHide={hideDeleteProductDialog}
       >
         <div className="flex align-items-center justify-content-center">
-          <i
-            className="pi pi-exclamation-triangle mr-3"
-            style={{ fontSize: '2rem' }}
-          />
+          <i className="pi pi-exclamation-triangle mr-3 text-4xl" />
           {product && (
             <span>Estás seguro de que quieres eliminar la instrucción?</span>
           )}
@@ -591,19 +520,18 @@ export default function Home() {
 
       <Dialog
         visible={deleteProductsDialog}
-        style={{ width: '450px' }}
         header="Confirmar"
         modal
         footer={deleteProductsDialogFooter}
         onHide={hideDeleteProductsDialog}
       >
         <div className="flex align-items-center justify-content-center">
-          <i
-            className="pi pi-exclamation-triangle mr-3"
-            style={{ fontSize: '2rem' }}
-          />
+          <i className="pi pi-exclamation-triangle mr-3 text-4xl" />
           {product && (
-            <span>Estás seguro de que quieres eliminar las instrucciones seleccionadas?</span>
+            <span>
+              Estás seguro de que quieres eliminar las instrucciones
+              seleccionadas?
+            </span>
           )}
         </div>
       </Dialog>
