@@ -445,7 +445,7 @@ export default function Home() {
           <Column
             className="capitalize"
             field="material_name"
-            header="Material Name"
+            header="Material"
             sortable
           ></Column>
           <Column body={actionBodyTemplate} exportable={false}></Column>
