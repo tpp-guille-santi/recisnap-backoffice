@@ -98,7 +98,7 @@ const EditPermissionsDialog = props => {
           </div>
           <div>
             <TogglableEntry
-              label="Editar usuarios"
+              label="Editar permisos de usuarios"
               icon={'pi pi-user-edit'}
               initialState={props.permissions.includes('grant_permissions')}
               changeValue={setCanEditPermissions}

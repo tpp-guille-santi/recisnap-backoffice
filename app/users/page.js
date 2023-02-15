@@ -4,6 +4,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { getUserList } from '../../utils/serverConnector';
 import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
 import PermissionIcon from '../../components/permissionIcon.js';
 import UserSession from '../../utils/userSession';
 import EditPermissionsDialog from '../../components/permissions/editPermissionsDialog.js';
@@ -15,6 +16,7 @@ const UsersPage = () => {
   const [dialogVisibility, setDialogVisibility] = useState(false);
   const [currentPermissions, setCurrentPermissions] = useState([]);
   const [editedUserId, setEditedUserId] = useState('');
+  const [globalFilter, setGlobalFilter] = useState(null);
 
   useEffect(() => {
     getUsers().then(data => setUsers(data));
@@ -86,10 +88,24 @@ const UsersPage = () => {
     );
   };
 
+  const header = (
+    <div className="flex flex-column md:flex-row md:align-items-center justify-content-between">
+      <span className="p-input-icon-left w-full md:w-auto">
+        <i className="pi pi-search" />
+        <InputText
+          type="search"
+          onInput={e => setGlobalFilter(e.target.value)}
+          placeholder="Search..."
+          className="w-full lg:w-auto"
+        />
+      </span>
+    </div>
+  );
+
   return (
     <PrivateRoute>
       <Navbar></Navbar>
-      <div className='m-5'>
+      <div className="m-5">
         <div className="text-3xl text-800 font-bold mb-4">Usuarios</div>
         <div>
           <EditPermissionsDialog
@@ -107,18 +123,12 @@ const UsersPage = () => {
           rowsPerPageOptions={[5, 10, 25]}
           paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
           currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
+          globalFilter={globalFilter}
+          header={header}
           responsiveLayout="scroll"
         >
-          <Column
-            field="email"
-            header="Email"
-            sortable
-          ></Column>
-          <Column
-            field="name"
-            header="Nombre"
-            sortable
-          ></Column>
+          <Column field="email" header="Email" sortable></Column>
+          <Column field="name" header="Nombre" sortable></Column>
           <Column
             header="Permisos"
             sortable
