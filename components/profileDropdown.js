@@ -49,7 +49,7 @@ const ProfileDropdown = () => {
       />
       <OverlayPanel ref={op}>
         <div className="flex flex-column align-content-center justify-content-center">
-          <div className="flex align-items-center justify-content-center">
+          <div className="flex align-items-center justify-content-center m-2">
             <Image
               src={imageUrl}
               alt="Profile Picture"
@@ -57,20 +57,18 @@ const ProfileDropdown = () => {
               height={50}
             />
           </div>
-          <div className="flex align-items-center justify-content-center">
-            <h4>{UserSession.getUser().name}</h4>
-          </div>
-          <div className="flex align-items-center justify-content-center">
-            <h4>{UserSession.getUser().email}</h4>
-          </div>
-          <div className="flex align-items-center justify-content-center">
-            <Button
-              className="p-button-danger p-button-outlined w-full"
-              icon="pi pi-sign-out"
-              label="Cerrar Sesión"
-              onClick={logout}
-            />
-          </div>
+          <h4 className="flex align-items-center justify-content-center m-2">
+            {UserSession.getUser().name}
+          </h4>
+          <h4 className="flex align-items-center justify-content-center m-2">
+            {UserSession.getUser().email}
+          </h4>
+          <Button
+            className="flex align-items-center justify-content-center p-button-danger p-button-outlined m-2 mt-4"
+            icon="pi pi-sign-out"
+            label="Cerrar Sesión"
+            onClick={logout}
+          />
         </div>
       </OverlayPanel>
     </div>
