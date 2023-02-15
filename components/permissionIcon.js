@@ -9,7 +9,6 @@ const PermissionIcon = props => {
       icon={props.icon}
       disabled
       tooltipOptions={{ showOnDisabled: true }}
-      style={{ marginRight: '2px' }}
     ></Button>
   );
 };

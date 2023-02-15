@@ -95,7 +95,6 @@ export default function Home() {
   };
 
   const setMaterial = argument => {
-    console.log(argument);
     setProduct({ ...product, material_name: argument.name });
   };
 
@@ -424,10 +423,7 @@ export default function Home() {
           header={header}
           responsiveLayout="scroll"
         >
-          <Column
-            selectionMode="multiple"
-            exportable={false}
-          ></Column>
+          <Column selectionMode="multiple" exportable={false}></Column>
           <Column
             className="capitalize"
             field="provincia"
@@ -457,7 +453,6 @@ export default function Home() {
       </div>
       <Dialog
         visible={productDialog}
-        breakpoints={{ '960px': '75vw', '640px': '100vw' }}
         modal
         maximized={true}
         className="p-fluid"
@@ -478,7 +473,6 @@ export default function Home() {
 
       <Dialog
         visible={viewProductDialog}
-        breakpoints={{ '960px': '75vw', '640px': '100vw' }}
         modal
         maximized={true}
         className="p-fluid"
@@ -504,6 +498,7 @@ export default function Home() {
       </Dialog>
 
       <Dialog
+        className="w-3"
         visible={deleteProductDialog}
         header="Confirmar"
         modal
@@ -519,6 +514,7 @@ export default function Home() {
       </Dialog>
 
       <Dialog
+        className="w-3"
         visible={deleteProductsDialog}
         header="Confirmar"
         modal

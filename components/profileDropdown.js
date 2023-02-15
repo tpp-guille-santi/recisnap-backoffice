@@ -16,8 +16,8 @@ const ProfileDropdown = () => {
       const auth = getAuth(app);
       UserSession.signOut();
       await signOut(auth);
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.log(e);
     }
     router.push('/login');
   };

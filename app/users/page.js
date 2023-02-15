@@ -64,7 +64,6 @@ const UsersPage = () => {
   };
 
   const closeDialog = () => {
-    console.log('Close dialog');
     setDialogVisibility(false);
     getUsers().then(data => setUsers(data));
   };
@@ -77,14 +76,10 @@ const UsersPage = () => {
           icon="pi pi-pencil"
           tooltip="Editar permisos"
           disabled={!UserSession.canEditPermissions()}
-          //disabled={false}
           onClick={() => {
-            console.log(rowData.permissions);
             setDialogVisibility(true);
             setCurrentPermissions(rowData.permissions);
             setEditedUserId(rowData['firebase_uid']);
-            //console.log(rowData);
-            //console.log(editedUserId);
           }}
         />
       </div>

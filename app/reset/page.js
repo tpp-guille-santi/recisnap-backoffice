@@ -43,11 +43,8 @@ function HookForm() {
       const auth = getAuth(app);
       await sendPasswordResetEmail(auth, email);
       router.push('/');
-    } catch (error) {
-      console.log('Error when reseting user password');
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(errorCode, errorMessage);
+    } catch (e) {
+      console.log(e)
       toast.current.show({
         severity: 'error',
         summary: 'Error',

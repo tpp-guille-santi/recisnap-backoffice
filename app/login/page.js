@@ -75,11 +75,8 @@ function HookForm() {
       const userInformation = await getUserById(credentials.user.uid);
       UserSession.setUser(userInformation);
       router.push('/instructions');
-    } catch (error) {
-      console.log('Error sign in');
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(errorCode, errorMessage);
+    } catch (e) {
+      console.log(e);
       toast.current.show({
         severity: 'error',
         summary: 'Error',
@@ -102,11 +99,8 @@ function HookForm() {
       const userInformation = await getUserById(user.uid);
       UserSession.setUser(userInformation);
       router.push('/instructions');
-    } catch (error) {
-      console.log('Error sign in');
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(errorCode, errorMessage);
+    } catch (e) {
+      console.log(e);
       toast.current.show({
         severity: 'error',
         summary: 'Error',

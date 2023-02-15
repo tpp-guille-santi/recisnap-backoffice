@@ -73,11 +73,8 @@ function HookForm() {
       const userInformation = await getUserById(user.uid);
       UserSession.setUser(userInformation);
       router.push('/instructions');
-    } catch (error) {
-      console.log('Error when creating user');
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(errorCode, errorMessage);
+    } catch (edit) {
+      console.log(e);
       toast.current.show({
         severity: 'error',
         summary: 'Error',
