@@ -1,3 +1,4 @@
+'use client';
 import { React, useEffect, useState } from 'react';
 import TogglableEntry from './togglableEntry';
 import { Dialog } from 'primereact/dialog';
@@ -27,87 +28,90 @@ const EditPermissionsDialog = props => {
 
   const saveNewPermissions = async () => {
     let userNewPermissions = [];
-    console.log({
-      viewDoc: canViewDocument,
-      block: canBlockDocument,
-      newDocs: canCreateDocument,
-      editDoc: canEditDocument,
-      users: canViewUsers,
-      permi: canEditPermissions
-    });
     if (canViewDocument) userNewPermissions.push('view_pages');
     if (canCreateDocument) userNewPermissions.push('create_page');
     if (canBlockDocument) userNewPermissions.push('block_page');
     if (canEditDocument) userNewPermissions.push('edit_page');
     if (canViewUsers) userNewPermissions.push('grant_permissions');
     if (canEditPermissions) userNewPermissions.push('view_users');
-    console.log(userNewPermissions);
-    const response = await updateUserPermissions(
-      props.editedUser,
-      userNewPermissions
-    );
+    await updateUserPermissions(props.editedUser, userNewPermissions);
     props.close();
   };
+
+  const dialogFooter = (
+    <div>
+      <Button
+        label="Cancelar"
+        icon="pi pi-times"
+        className="p-button-text"
+        onClick={() => props.close()}
+      />
+      <Button
+        label="Guardar"
+        icon="pi pi-check"
+        onClick={() => saveNewPermissions()}
+      />
+    </div>
+  );
 
   return (
     <div>
       <Dialog
+        className="w-3"
         visible={props.visibility}
+        footer={dialogFooter}
         onHide={() => props.close()}
-        style={{ width: '50vw' }}
         header="Permisos del usuario"
       >
         <div>
           <div>
             <TogglableEntry
-              label="Ver documento"
+              label="Ver instrucciones"
+              icon={'pi pi-eye'}
               initialState={props.permissions.includes('view_pages')}
               changeValue={setCanViewDocument}
             ></TogglableEntry>
           </div>
           <div>
             <TogglableEntry
-              label="Nuevo documento"
+              label="Crear instrucciones"
+              icon={'pi pi-plus'}
               initialState={props.permissions.includes('create_page')}
               changeValue={setCanCreateDocument}
             ></TogglableEntry>
           </div>
           <div>
             <TogglableEntry
-              label="Blockear documento"
+              label="Bloquear instrucciones"
+              icon={'pi pi-stop-circle'}
               initialState={props.permissions.includes('block_page')}
               changeValue={setCanBlockDocument}
             ></TogglableEntry>
           </div>
           <div>
             <TogglableEntry
-              label="Editar documento"
+              label="Editar instrucciones"
+              icon={'pi pi-file-edit'}
               initialState={props.permissions.includes('edit_page')}
               changeValue={setCanEditDocument}
             ></TogglableEntry>
           </div>
           <div>
             <TogglableEntry
-              label="Dar permisos"
+              label="Editar permisos de usuarios"
+              icon={'pi pi-user-edit'}
               initialState={props.permissions.includes('grant_permissions')}
               changeValue={setCanEditPermissions}
             ></TogglableEntry>
           </div>
           <div>
             <TogglableEntry
-              label="Ver usuario"
+              label="Ver usuarios"
+              icon={'pi pi-user'}
               initialState={props.permissions.includes('view_users')}
               changeValue={setCanViewUsers}
             ></TogglableEntry>
           </div>
-        </div>
-        <div>
-          <Button
-            onClick={() => saveNewPermissions()}
-            style={{ marginTop: '1em' }}
-          >
-            Guardar cambios
-          </Button>
         </div>
       </Dialog>
     </div>

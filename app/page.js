@@ -1,143 +1,51 @@
-'use client';
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  getAuth,
-  signInWithPopup,
-  GoogleAuthProvider,
-  signInWithEmailAndPassword,
-  getAdditionalUserInfo
-} from 'firebase/auth';
-import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
-import { Password } from 'primereact/password';
-import { app } from './firebase-config';
-import { Card } from 'primereact/card';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { saveNewUser, getUserById } from '../utils/serverConnector';
-import UserSession from '../utils/userSession';
-import UserProfile from '../utils/userSession';
-import { ReactSession } from 'react-client-session';
+import RouterButton from '../components/routerButton';
 
-const LoginPage = () => {
-  const [value1, setValue1] = useState();
-  const [value2, setValue2] = useState();
-
-  const auth = getAuth(app);
-  const googleProvider = new GoogleAuthProvider();
-  const router = useRouter();
-  ReactSession.setStoreType('localStorage');
-  const signInWithGoogle = async () => {
-    const res = await signInWithPopup(auth, googleProvider)
-      .then(credentials => {
-        const isNewUser = getAdditionalUserInfo(credentials).isNewUser;
-        if (isNewUser) {
-          //Manejar Signup
-          const exit = saveNewUser({
-            firebase_uid: credentials.user.uid,
-            email: credentials.user.email,
-            name: credentials.user.displayName
-          });
-        }
-        //Manejar Login
-        getUserById(credentials.user.uid)
-          .then(userInformation => {
-            UserSession.setUser(userInformation);
-            router.push('/homepage');
-          })
-          .catch(e => {
-            console.log(e);
-          });
-        //        router.push('/homepage');
-      })
-      .catch(err => {
-        console.error(err);
-        alert(err.message);
-        /*
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
-      
-      */
-      });
-  };
-
-  const signInWithEmail = (email, password) => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then(userCredential => {
-        // Signed in
-        const user = userCredential.user;
-        getUserById(user.uid)
-          .then(userInformation => {
-            UserSession.setUser(userInformation);
-            router.push('/homepage');
-          })
-          .catch(e => {
-            console.log(e);
-          });
-      })
-      .catch(error => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-      });
-  };
-
+const Home = () => {
   return (
-    <div>
-      <h1>Recisnap!</h1>
-      <div>
-        <Card
-          style={{ width: '25rem', marginBottom: '1em', borderStyle: 'double' }}
-        >
-          <div>
-            <InputText
-              value={value1}
-              onChange={e => setValue1(e.target.value)}
-              placeholder="Email"
-            />
-            <Password
-              style={{ marginTop: '1em', marginBottom: '1em' }}
-              value={value2}
-              onChange={e => setValue2(e.target.value)}
-              placeholder="Contraseña"
-            />
+    <div className="block">
+      <div className="flex inline h-screen">
+        <div className="flex-1 flex align-items-center justify-content-center mx-6">
+          <div className="flex flex-column">
+            <h1>Bienvenido a Recisnap</h1>
+            <h2>
+              Un sitio en donde podrás encontrar información de cómo reciclar en
+              tu zona, y donde podrás aportar tus conocimientos a la comunidad
+            </h2>
+            <p>
+              Pellentesque habitant morbi tristique senectus et netus et
+              malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat
+              vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit
+              amet quam egestas semper. Aenean ultricies mi vitae est. Mauris
+              placerat eleifend leo. Quisque sit amet est et sapien ullamcorper
+              pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae,
+              ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt
+              condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac
+              dui. Donec non enim in turpis pulvinar facilisis. Ut felis.
+              Praesent dapibus, neque id cursus faucibus, tortor neque egestas
+              augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam
+              dui mi, tincidunt quis, accumsan porttitor, facilisis luctus,
+              metus
+            </p>
           </div>
-          <div>
-            <Button
-              label="Loguearse"
-              onClick={() => {
-                signInWithEmail(value1, value2);
-              }}
-            />
-          </div>
-          <br></br>
-          <hr></hr>
-          <Button
-            style={{ marginTop: '1em', marginBottom: '1em' }}
-            label="Entrar con Google"
-            onClick={signInWithGoogle}
-          />
-          <div>
-            <Link href="/reset">Olvidé mi contraseña</Link>
-          </div>
-        </Card>
-      </div>
-      <Card
-        style={{ width: '25rem', marginBottom: '1em', borderStyle: 'double' }}
-      >
-        <div>
-          No tenes cuenta?{' '}
-          <Link href="/register">Hace click para registrarte!</Link>
         </div>
-      </Card>
+        <div className="flex-1 flex align-items-center justify-content-center fill">
+          <div className="absolute top-0 right-0 mt-4 mr-4">
+            <div className="flex flex-row flex-wrap gap-3">
+              <RouterButton route={'/login'} label={'Ingresar'}></RouterButton>
+              <RouterButton
+                route={'/register'}
+                label={'Registrarme'}
+              ></RouterButton>
+            </div>
+          </div>
+          <img
+            src="https://cdn.britannica.com/40/93540-050-48FF9C9E/items-recycling-centre.jpg"
+            alt=""
+          />
+        </div>
+      </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default Home;

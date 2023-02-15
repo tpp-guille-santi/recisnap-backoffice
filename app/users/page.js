@@ -1,18 +1,22 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { getUserList } from '../../utils/serverConnector';
 import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
 import PermissionIcon from '../../components/permissionIcon.js';
 import UserSession from '../../utils/userSession';
 import EditPermissionsDialog from '../../components/permissions/editPermissionsDialog.js';
+import PrivateRoute from '../../components/privateRoute';
+import Navbar from '../../components/navbar';
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
   const [dialogVisibility, setDialogVisibility] = useState(false);
   const [currentPermissions, setCurrentPermissions] = useState([]);
   const [editedUserId, setEditedUserId] = useState('');
+  const [globalFilter, setGlobalFilter] = useState(null);
 
   useEffect(() => {
     getUsers().then(data => setUsers(data));
@@ -62,7 +66,6 @@ const UsersPage = () => {
   };
 
   const closeDialog = () => {
-    console.log('Close dialog');
     setDialogVisibility(false);
     getUsers().then(data => setUsers(data));
   };
@@ -71,70 +74,74 @@ const UsersPage = () => {
     return (
       <div>
         <Button
-          className="p-button-rounded"
+          className="p-button-rounded m-1"
           icon="pi pi-pencil"
           tooltip="Editar permisos"
           disabled={!UserSession.canEditPermissions()}
-          //disabled={false}
           onClick={() => {
-            console.log(rowData.permissions);
             setDialogVisibility(true);
             setCurrentPermissions(rowData.permissions);
             setEditedUserId(rowData['firebase_uid']);
-            //console.log(rowData);
-            //console.log(editedUserId);
           }}
         />
       </div>
     );
   };
 
-  return (
-    <div>
-      <div>
-        <EditPermissionsDialog
-          visibility={dialogVisibility}
-          close={closeDialog}
-          permissions={currentPermissions}
-          editedUser={editedUserId}
-        ></EditPermissionsDialog>
-      </div>
-      <DataTable
-        value={users}
-        dataKey="id"
-        paginator
-        rows={10}
-        rowsPerPageOptions={[5, 10, 25]}
-        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
-        responsiveLayout="scroll"
-      >
-        <Column
-          field="email"
-          header="Email"
-          sortable
-          style={{ minWidth: '8rem' }}
-        ></Column>
-        <Column
-          field="name"
-          header="Nombre"
-          sortable
-          style={{ minWidth: '16rem' }}
-        ></Column>
-        <Column
-          header="Permisos"
-          sortable
-          style={{ minWidth: '16rem' }}
-          body={permissionsColumnBody}
-        ></Column>
-        <Column
-          header="Acciones"
-          exportable={false}
-          style={{ minWidth: '8rem' }}
-          body={actionsBody}
-        ></Column>
-      </DataTable>
+  const header = (
+    <div className="flex flex-column md:flex-row md:align-items-center justify-content-between">
+      <span className="p-input-icon-left w-full md:w-auto">
+        <i className="pi pi-search" />
+        <InputText
+          type="search"
+          onInput={e => setGlobalFilter(e.target.value)}
+          placeholder="Buscar..."
+          className="w-full lg:w-auto"
+        />
+      </span>
     </div>
+  );
+
+  return (
+    <PrivateRoute>
+      <Navbar></Navbar>
+      <div className="m-5">
+        <div className="text-3xl text-800 font-bold mb-4">Usuarios</div>
+        <div>
+          <EditPermissionsDialog
+            visibility={dialogVisibility}
+            close={closeDialog}
+            permissions={currentPermissions}
+            editedUser={editedUserId}
+          ></EditPermissionsDialog>
+        </div>
+        <DataTable
+          value={users}
+          dataKey="id"
+          paginator
+          rows={10}
+          rowsPerPageOptions={[5, 10, 25]}
+          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
+          globalFilter={globalFilter}
+          header={header}
+          responsiveLayout="scroll"
+        >
+          <Column field="email" header="Email" sortable></Column>
+          <Column field="name" header="Nombre" sortable></Column>
+          <Column
+            header="Permisos"
+            sortable
+            body={permissionsColumnBody}
+          ></Column>
+          <Column
+            header="Acciones"
+            exportable={false}
+            body={actionsBody}
+          ></Column>
+        </DataTable>
+      </div>
+    </PrivateRoute>
   );
 };
 
