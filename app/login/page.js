@@ -7,27 +7,26 @@ import { Password } from 'primereact/password';
 import { classNames } from 'primereact/utils';
 import { Toast } from 'primereact/toast';
 import { app } from '../firebase-config';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  getAdditionalUserInfo
+} from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { saveNewUser, getUserById } from '../../utils/serverConnector';
 import Image from 'next/image';
 import logo from '../../public/logo.png';
 import Link from 'next/link';
-import {
-  emailValidator,
-  nameValidator,
-  passwordValidator,
-  confirmPasswordValidator
-} from '../../utils/validators';
+import { emailValidator, passwordValidator } from '../../utils/validators';
 import UserSession from '../../utils/userSession';
 import Spinner from '../../components/spinner';
 
 function HookForm() {
   const defaultValues = {
-    name: '',
     email: '',
-    password: '',
-    confirm_password: ''
+    password: ''
   };
 
   const [loading, setLoading] = useState(false);
@@ -42,50 +41,12 @@ function HookForm() {
 
   const onSubmit = async data => {
     setLoading(true);
-    await saveUser(data);
-    setLoading(false);
+    await signInWithEmail(data.email, data.password);
     reset();
+    setLoading(false);
   };
 
-  const auth = getAuth(app);
   const router = useRouter();
-
-  const saveUser = async data => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      );
-      const user = userCredential.user;
-      const userInformationObject = {
-        firebase_uid: user.uid,
-        name: data.name,
-        email: data.email
-      };
-      const exit = await saveNewUser(userInformationObject);
-      toast.current.show({
-        severity: 'success',
-        summary: 'Éxito',
-        detail: 'El usuario se creó con éxito',
-        life: 3000
-      });
-      const userInformation = await getUserById(user.uid);
-      UserSession.setUser(userInformation);
-      router.push('/instructions');
-    } catch (error) {
-      console.log('Error when creating user');
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(errorCode, errorMessage);
-      toast.current.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Error al intentar crear el usuario',
-        life: 3000
-      });
-    }
-  };
 
   const getFormErrorMessage = name => {
     return (
@@ -97,13 +58,71 @@ function HookForm() {
     return loading && <Spinner />;
   };
 
+  const signInWithGoogle = async () => {
+    setLoading(true);
+    try {
+      const auth = getAuth(app);
+      const googleProvider = new GoogleAuthProvider();
+      const credentials = await signInWithPopup(auth, googleProvider);
+      const isNewUser = await getAdditionalUserInfo(credentials).isNewUser;
+      if (isNewUser) {
+        await saveNewUser({
+          firebase_uid: credentials.user.uid,
+          email: credentials.user.email,
+          name: credentials.user.displayName
+        });
+      }
+      const userInformation = await getUserById(credentials.user.uid);
+      UserSession.setUser(userInformation);
+      router.push('/instructions');
+    } catch (error) {
+      console.log('Error sign in');
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode, errorMessage);
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al intentar ingresar',
+        life: 3000
+      });
+    }
+    setLoading(false);
+  };
+
+  const signInWithEmail = async (email, password) => {
+    try {
+      const auth = getAuth(app);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      const userInformation = await getUserById(user.uid);
+      UserSession.setUser(userInformation);
+      router.push('/instructions');
+    } catch (error) {
+      console.log('Error sign in');
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode, errorMessage);
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al intentar ingresar',
+        life: 3000
+      });
+    }
+  };
+
   return (
     <div>
       <Toast ref={toast} />
       {getProgressSpinner()}
       <div className="card">
         <div className="h-screen flex justify-content-center align-content-center flex-wrap">
-          <div className="inline-flex flex-wrap flex-column surface-card border-round shadow-2 py-6 px-6">
+          <div className="inline-flex flex-wrap flex-column surface-card border-round shadow-2 py-6 px-8">
             <div className="flex align-items-center justify-content-center flex-wrap pb-5">
               <div className="flex align-items-center justify-content-center">
                 <Image src={logo} alt="Recisnap logo" height={60} />
@@ -113,31 +132,6 @@ function HookForm() {
               </div>
             </div>
             <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
-              <div className="mb-5">
-                <span className="p-float-label">
-                  <Controller
-                    name="name"
-                    control={control}
-                    rules={{ validate: nameValidator }}
-                    render={({ field, fieldState }) => (
-                      <InputText
-                        id={field.name}
-                        {...field}
-                        className={classNames({
-                          'p-invalid': fieldState.invalid
-                        })}
-                      />
-                    )}
-                  />
-                  <label
-                    htmlFor="name"
-                    className={classNames({ 'p-error': errors.name })}
-                  >
-                    Nombre y Apellido
-                  </label>
-                </span>
-                {getFormErrorMessage('name')}
-              </div>
               <div className="mb-5">
                 <span className="p-float-label p-input-icon-right">
                   <i className="pi pi-envelope" />
@@ -176,6 +170,7 @@ function HookForm() {
                         {...field}
                         inputRef={field.ref}
                         toggleMask
+                        feedback={false}
                         className={classNames({
                           'p-invalid': fieldState.invalid
                         })}
@@ -191,41 +186,28 @@ function HookForm() {
                 </span>
                 {getFormErrorMessage('password')}
               </div>
+
               <div className="mb-5">
-                <span className="p-float-label">
-                  <Controller
-                    name="confirm_password"
-                    control={control}
-                    rules={{ validate: confirmPasswordValidator }}
-                    render={({ field, fieldState }) => (
-                      <Password
-                        id={field.name}
-                        {...field}
-                        inputRef={field.ref}
-                        toggleMask
-                        className={classNames({
-                          'p-invalid': fieldState.invalid
-                        })}
-                      />
-                    )}
-                  />
-                  <label
-                    htmlFor="confirm_password"
-                    className={classNames({
-                      'p-error': errors.confirm_password
-                    })}
-                  >
-                    Repetir contraseña
-                  </label>
-                </span>
-                {getFormErrorMessage('confirm_password')}
+                <Button className="p-2" type="submit" label="Ingresar" />
               </div>
               <div className="mb-5">
-                <Button className="p-2" type="submit" label="Registrate" />
+                <Link href="/reset">Olvidé mi contraseña</Link>
               </div>
               <div className="mb-5">
-                Ya tenes cuenta?{' '}
-                <Link href="/login">Hace click aquí para ingresar</Link>
+                <hr></hr>
+              </div>
+
+              <div className="mb-5">
+                <Button
+                  className="p-2 bg-white text-color"
+                  icon="pi pi-google"
+                  label="Continuar con Google"
+                  onClick={signInWithGoogle}
+                />
+              </div>
+              <div className="mb-5">
+                No tenes cuenta?{' '}
+                <Link href="/register">Hace click aquí para registrarte</Link>
               </div>
             </form>
           </div>

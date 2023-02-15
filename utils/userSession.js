@@ -3,7 +3,7 @@ import { ReactSession } from 'react-client-session';
 const UserSession = (function () {
   const setUser = userInformation => {
     const user = userInformation.data;
-    console.log(user);
+    ReactSession.setStoreType('sessionStorage');
     ReactSession.set('user', user.name);
     ReactSession.set('email', user.email);
     ReactSession.set('firebaseUid', user.firebase_uid);
@@ -11,6 +11,7 @@ const UserSession = (function () {
   };
 
   const getUser = () => {
+    ReactSession.setStoreType('sessionStorage');
     return {
       name: ReactSession.get('user'),
       email: ReactSession.get('email'),
@@ -20,6 +21,7 @@ const UserSession = (function () {
   };
 
   const canEditPermissions = () => {
+    ReactSession.setStoreType('sessionStorage');
     const permissions = ReactSession.get('permissions');
     if (permissions === undefined) {
       return false;
@@ -27,9 +29,25 @@ const UserSession = (function () {
     return permissions.includes('grant_permissions');
   };
 
+  const signOut = () => {
+    ReactSession.setStoreType('sessionStorage');
+    ReactSession.set('user', null);
+    ReactSession.set('email', null);
+    ReactSession.set('firebaseUid', null);
+    ReactSession.set('permissions', null);
+  };
+
+  const isLoggedIn = () => {
+    const user = getUser();
+    const firebaseUid = user.firebaseUid ?? false;
+    return !!firebaseUid;
+  };
+
   return {
     setUser: setUser,
     getUser: getUser,
+    isLoggedIn: isLoggedIn,
+    signOut: signOut,
     canEditPermissions: canEditPermissions
   };
 })();
