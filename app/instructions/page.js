@@ -332,7 +332,7 @@ export default function Home() {
         <InputText
           type="search"
           onInput={e => setGlobalFilter(e.target.value)}
-          placeholder="Search..."
+          placeholder="Buscar..."
           className="w-full lg:w-auto"
         />
       </span>
