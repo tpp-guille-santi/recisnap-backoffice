@@ -14,8 +14,8 @@ const ProfileDropdown = () => {
   const logout = async () => {
     try {
       const auth = getAuth(app);
-      await signOut(auth);
       UserSession.signOut();
+      await signOut(auth);
     } catch (error) {
       console.log(error);
     }
