@@ -4,38 +4,42 @@ import TogglableEntry from './togglableEntry';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { updateUserPermissions } from '../../utils/serverConnector';
+import all_permissions from '../../config/permissions.json';
 
 const EditPermissionsDialog = props => {
-  const [canViewDocument, setCanViewDocument] = useState(false);
-  const [canCreateDocument, setCanCreateDocument] = useState(false);
-  const [canEditDocument, setCanEditDocument] = useState(false);
-  const [canBlockDocument, setCanBlockDocument] = useState(false);
-  const [canEditPermissions, setCanEditPermissions] = useState(false);
-  const [canViewUsers, setCanViewUsers] = useState(false);
+  const [checkedPermissions, setCheckedPermissions] = useState([]);
+
+  function changePermission(id, value) {
+    console.log(checkedPermissions);
+    const permission = checkedPermissions.find(
+      permission => permission.id === id
+    );
+    permission.value = value;
+    setCheckedPermissions(checkedPermissions);
+  }
 
   useEffect(() => {
-    setCanViewDocument(props.permissions.includes('view_pages'));
-    setCanCreateDocument(props.permissions.includes('create_page'));
-    setCanBlockDocument(props.permissions.includes('block_page'));
-    setCanEditDocument(props.permissions.includes('edit_page'));
-    setCanEditPermissions(props.permissions.includes('grant_permissions'));
-    setCanViewUsers(props.permissions.includes('view_users'));
+    setCheckedPermissions(
+      all_permissions.map(permission => {
+        return {
+          id: permission.id,
+          value: props.permissions.includes(permission.id)
+        };
+      })
+    );
   }, [props.permissions]);
 
-  /*useEffect(() => {
-    setCanViewDocument(props.permissions.includes('view_pages'));
-  }, [props.permissions]);*/
-
-  const saveNewPermissions = async () => {
-    let userNewPermissions = [];
-    if (canViewDocument) userNewPermissions.push('view_pages');
-    if (canCreateDocument) userNewPermissions.push('create_page');
-    if (canBlockDocument) userNewPermissions.push('block_page');
-    if (canEditDocument) userNewPermissions.push('edit_page');
-    if (canViewUsers) userNewPermissions.push('grant_permissions');
-    if (canEditPermissions) userNewPermissions.push('view_users');
-    await updateUserPermissions(props.editedUser, userNewPermissions);
-    props.close();
+  const savePermissions = async () => {
+    console.log(checkedPermissions);
+    const permissions = checkedPermissions
+      .filter(permission => !!permission.value)
+      .map(permission => permission.id);
+    console.log(permissions);
+    const success = await updateUserPermissions(props.editedUser, permissions);
+    if (success) {
+      props.save(props.editedUser, permissions);
+    }
+    setCheckedPermissions([]);
   };
 
   const dialogFooter = (
@@ -49,7 +53,7 @@ const EditPermissionsDialog = props => {
       <Button
         label="Guardar"
         icon="pi pi-check"
-        onClick={() => saveNewPermissions()}
+        onClick={() => savePermissions()}
       />
     </div>
   );
@@ -64,54 +68,17 @@ const EditPermissionsDialog = props => {
         header="Permisos del usuario"
       >
         <div>
-          <div>
-            <TogglableEntry
-              label="Ver instrucciones"
-              icon={'pi pi-eye'}
-              initialState={props.permissions.includes('view_pages')}
-              changeValue={setCanViewDocument}
-            ></TogglableEntry>
-          </div>
-          <div>
-            <TogglableEntry
-              label="Crear instrucciones"
-              icon={'pi pi-plus'}
-              initialState={props.permissions.includes('create_page')}
-              changeValue={setCanCreateDocument}
-            ></TogglableEntry>
-          </div>
-          <div>
-            <TogglableEntry
-              label="Bloquear instrucciones"
-              icon={'pi pi-stop-circle'}
-              initialState={props.permissions.includes('block_page')}
-              changeValue={setCanBlockDocument}
-            ></TogglableEntry>
-          </div>
-          <div>
-            <TogglableEntry
-              label="Editar instrucciones"
-              icon={'pi pi-file-edit'}
-              initialState={props.permissions.includes('edit_page')}
-              changeValue={setCanEditDocument}
-            ></TogglableEntry>
-          </div>
-          <div>
-            <TogglableEntry
-              label="Editar permisos de usuarios"
-              icon={'pi pi-user-edit'}
-              initialState={props.permissions.includes('grant_permissions')}
-              changeValue={setCanEditPermissions}
-            ></TogglableEntry>
-          </div>
-          <div>
-            <TogglableEntry
-              label="Ver usuarios"
-              icon={'pi pi-user'}
-              initialState={props.permissions.includes('view_users')}
-              changeValue={setCanViewUsers}
-            ></TogglableEntry>
-          </div>
+          {all_permissions.map(permission => {
+            return (
+              <TogglableEntry
+                key={permission.id}
+                id={permission.id}
+                label={permission.label}
+                initialState={props.permissions.includes(permission.id)}
+                changeValue={changePermission}
+              ></TogglableEntry>
+            );
+          })}
         </div>
       </Dialog>
     </div>

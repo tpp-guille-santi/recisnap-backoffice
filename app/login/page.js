@@ -74,6 +74,16 @@ function HookForm() {
       }
       const userInformation = await getUserById(credentials.user.uid);
       UserSession.setUser(userInformation);
+      if (!UserSession.canViewInstructions()) {
+        toast.current.show({
+          severity: 'error',
+          summary: 'Error',
+          detail:
+            'El usuario se encuentra bloqueado. Pro favor hablar con un administrador',
+          life: 3000
+        });
+        return;
+      }
       router.push('/instructions');
     } catch (e) {
       console.log(e);
@@ -98,6 +108,16 @@ function HookForm() {
       const user = userCredential.user;
       const userInformation = await getUserById(user.uid);
       UserSession.setUser(userInformation);
+      if (!UserSession.canViewInstructions()) {
+        toast.current.show({
+          severity: 'error',
+          summary: 'Error',
+          detail:
+            'El usuario se encuentra bloqueado. Pro favor hablar con un administrador',
+          life: 3000
+        });
+        return;
+      }
       router.push('/instructions');
     } catch (e) {
       console.log(e);

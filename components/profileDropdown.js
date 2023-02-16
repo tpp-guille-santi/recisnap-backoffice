@@ -1,8 +1,6 @@
 'use client';
 import { useRef } from 'react';
 import UserSession from '../utils/userSession';
-import { app } from '../app/firebase-config';
-import { getAuth, signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import Image from 'next/image';
@@ -11,14 +9,8 @@ import { Button } from 'primereact/button';
 const ProfileDropdown = () => {
   const router = useRouter();
 
-  const logout = async () => {
-    try {
-      const auth = getAuth(app);
-      UserSession.signOut();
-      await signOut(auth);
-    } catch (e) {
-      console.log(e);
-    }
+  const signOut = async () => {
+    UserSession.logout();
     router.push('/login');
   };
 
@@ -67,7 +59,7 @@ const ProfileDropdown = () => {
             className="flex align-items-center justify-content-center p-button-danger p-button-outlined m-2 mt-4"
             icon="pi pi-sign-out"
             label="Cerrar Sesión"
-            onClick={logout}
+            onClick={signOut}
           />
         </div>
       </OverlayPanel>
