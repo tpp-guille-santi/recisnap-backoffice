@@ -82,7 +82,7 @@ const UsersPage = () => {
             className="p-button-rounded m-1"
             icon="pi pi-pencil"
             tooltip="Editar permisos"
-            disabled={!UserSession.canEditPermissions()}
+            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
             onClick={() => {
               setDialogVisibility(true);
               setCurrentPermissions(rowData.permissions);
@@ -92,8 +92,10 @@ const UsersPage = () => {
         )}
         {UserSession.canDeleteUsers() && (
           <Button
-            icon="pi pi-trash"
             className="p-button-rounded p-button-danger m-1"
+            icon="pi pi-trash"
+            tooltip="Eliminar usuario"
+            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
             onClick={() => confirmDeleteUser(rowData)}
           />
         )}

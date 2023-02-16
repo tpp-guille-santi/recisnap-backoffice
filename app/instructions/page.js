@@ -331,6 +331,8 @@ export default function Home() {
         <Button
           icon="pi pi-file"
           className="p-button-rounded p-button-info m-1"
+          tooltip="Ver instrucciones"
+          tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
           onClick={() => viewProduct(rowData)}
         />
         {(UserSession.canBlockInstructions() ||
@@ -338,6 +340,8 @@ export default function Home() {
           <Button
             icon="pi pi-pencil"
             className="p-button-rounded p-button-success m-1"
+            tooltip="Editar instrucciones"
+            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
             onClick={() => editProduct(rowData)}
           />
         )}
@@ -345,6 +349,8 @@ export default function Home() {
           <Button
             icon="pi pi-trash"
             className="p-button-rounded p-button-danger m-1"
+            tooltip="Eliminar instrucciones"
+            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
             onClick={() => confirmDeleteProduct(rowData)}
           />
         )}
@@ -363,14 +369,14 @@ export default function Home() {
           className="w-full lg:w-auto"
         />
       </span>
-      <div className="mt-3 md:mt-0 flex justify-content-end">
+      <div className="mt-3 md:mt-0 flex justify-content-end mr-8">
         {UserSession.canCreateInstructions() && (
           <Button
             icon="pi pi-plus"
             className="mr-2 p-button-rounded"
             onClick={openNew}
-            tooltip="New"
-            tooltipOptions={{ position: 'bottom' }}
+            tooltip="Crear instrucciones"
+            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
           />
         )}
         {UserSession.canDeleteInstructions() && (
@@ -379,8 +385,8 @@ export default function Home() {
             className="p-button-danger mr-2 p-button-rounded"
             onClick={confirmDeleteSelected}
             disabled={!selectedProducts || !selectedProducts.length}
-            tooltip="Delete"
-            tooltipOptions={{ position: 'bottom' }}
+            tooltip="Eliminar selección"
+            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
           />
         )}
       </div>
