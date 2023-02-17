@@ -1,6 +1,5 @@
 'use client';
 import { React, useState } from 'react';
-import { ToggleButton } from 'primereact/togglebutton';
 import { InputSwitch } from 'primereact/inputswitch';
 
 const TogglableEntry = props => {
@@ -8,7 +7,7 @@ const TogglableEntry = props => {
 
   const onChangeValue = value => {
     setChecked(value);
-    props.changeValue(value);
+    props.changeValue(props.id, value);
   };
 
   return (

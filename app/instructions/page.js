@@ -15,6 +15,9 @@ import { app } from '../firebase-config';
 import PrivateRoute from '../../components/privateRoute';
 import { getStorage, getBytes, ref, uploadString } from 'firebase/storage';
 import Navbar from '../../components/navbar';
+import UserSession from '../../utils/userSession';
+import { InputSwitch } from 'primereact/inputswitch';
+import { updateInstruction } from '../../utils/serverConnector';
 
 export default function Home() {
   let emptyProduct = {
@@ -34,11 +37,12 @@ export default function Home() {
   const [viewProductDialog, setViewProductDialog] = useState(false);
   const [deleteProductDialog, setDeleteProductDialog] = useState(false);
   const [deleteProductsDialog, setDeleteProductsDialog] = useState(false);
-  const [product, setProduct] = useState(emptyProduct);
+  const [currentProduct, setCurrentProduct] = useState(emptyProduct);
   const [selectedProducts, setSelectedProducts] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [markdown, setMarkdown] = useState('');
   const [templateMarkdown, setTemplateMarkdown] = useState('');
+  const [editable, setEditable] = useState(false);
   const toast = useRef(null);
   const dt = useRef(null);
 
@@ -67,7 +71,7 @@ export default function Home() {
     ].join('-');
   };
 
-  const uploadInstructionsMarkdown = async () => {
+  const uploadInstructionsMarkdown = async product => {
     try {
       const storageRef = ref(
         storage,
@@ -95,19 +99,19 @@ export default function Home() {
   };
 
   const setMaterial = argument => {
-    setProduct({ ...product, material_name: argument.name });
+    setCurrentProduct({ ...currentProduct, material_name: argument.name });
   };
 
   const setProvincia = argument => {
-    setProduct({ ...product, provincia: argument.nombre });
+    setCurrentProduct({ ...currentProduct, provincia: argument.nombre });
   };
 
   const setMunicipio = argument => {
-    setProduct({ ...product, municipio: argument.nombre });
+    setCurrentProduct({ ...currentProduct, municipio: argument.nombre });
   };
 
   const setDepartamento = argument => {
-    setProduct({ ...product, departamento: argument.nombre });
+    setCurrentProduct({ ...currentProduct, departamento: argument.nombre });
   };
 
   async function getInstructions() {
@@ -158,7 +162,7 @@ export default function Home() {
   }, []);
 
   const openNew = () => {
-    setProduct(emptyProduct);
+    setCurrentProduct(emptyProduct);
     setMarkdown(templateMarkdown);
     setProductDialog(true);
     setPreloaded(false);
@@ -183,14 +187,14 @@ export default function Home() {
   };
 
   const createProduct = async () => {
-    if (product.material_name && product.provincia) {
+    if (currentProduct.material_name && currentProduct.provincia) {
       try {
         const body = {
-          material_name: product.material_name,
+          material_name: currentProduct.material_name,
           editable: true,
-          municipio: product.municipio,
-          provincia: product.provincia,
-          departamento: product.departamento
+          municipio: currentProduct.municipio,
+          provincia: currentProduct.provincia,
+          departamento: currentProduct.departamento
         };
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/pages`,
@@ -215,10 +219,27 @@ export default function Home() {
   };
 
   const updateProduct = async () => {
+    const success = await updateInstruction(currentProduct.id, {
+      editable: editable
+    });
+    if (success) {
+      const product = products.find(
+        product => product.id === currentProduct.id
+      );
+      product.editable = editable;
+      setProducts(products);
+      toast.current.show({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: 'Instrucción actualizada',
+        life: 3000
+      });
+      return;
+    }
     toast.current.show({
-      severity: 'success',
-      summary: 'Éxito',
-      detail: 'Instrucción actualizada',
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Error al intentar actualizar la instrucción',
       life: 3000
     });
   };
@@ -229,45 +250,46 @@ export default function Home() {
     } else {
       await createProduct();
     }
-    uploadInstructionsMarkdown();
+    uploadInstructionsMarkdown(currentProduct);
     setProductDialog(false);
-    setProduct(emptyProduct);
+    setCurrentProduct(emptyProduct);
     setMarkdown('');
   };
 
   const viewProduct = product => {
-    setProduct({ ...product });
+    setCurrentProduct({ ...product });
     setMarkdownFromInstructions(product);
     setViewProductDialog(true);
   };
 
   const editProduct = product => {
-    setProduct({ ...product });
+    setCurrentProduct({ ...product });
+    setEditable(product.editable);
     setMarkdownFromInstructions(product);
     setProductDialog(true);
     setPreloaded(true);
   };
 
   const confirmDeleteProduct = product => {
-    setProduct(product);
+    setCurrentProduct(product);
     setDeleteProductDialog(true);
   };
 
   const deleteProduct = async () => {
-    const success = await deleteInstruction(product);
+    const success = await deleteInstruction(currentProduct);
     if (!success) {
       toast.current.show({
         severity: 'error',
         summary: 'Error',
-        detail: 'Product could not be deleted',
+        detail: 'No se pudo eliminar la instrucción',
         life: 3000
       });
       return;
     }
-    let _products = products.filter(val => val.id !== product.id);
+    let _products = products.filter(val => val.id !== currentProduct.id);
     setProducts(_products);
     setDeleteProductDialog(false);
-    setProduct(emptyProduct);
+    setCurrentProduct(emptyProduct);
     toast.current.show({
       severity: 'success',
       summary: 'Éxito',
@@ -309,18 +331,29 @@ export default function Home() {
         <Button
           icon="pi pi-file"
           className="p-button-rounded p-button-info m-1"
+          tooltip="Ver instrucciones"
+          tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
           onClick={() => viewProduct(rowData)}
         />
-        <Button
-          icon="pi pi-pencil"
-          className="p-button-rounded p-button-success m-1"
-          onClick={() => editProduct(rowData)}
-        />
-        <Button
-          icon="pi pi-trash"
-          className="p-button-rounded p-button-danger m-1"
-          onClick={() => confirmDeleteProduct(rowData)}
-        />
+        {(UserSession.canBlockInstructions() ||
+          (UserSession.canEditInstructions() && rowData.editable)) && (
+          <Button
+            icon="pi pi-pencil"
+            className="p-button-rounded p-button-success m-1"
+            tooltip="Editar instrucciones"
+            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
+            onClick={() => editProduct(rowData)}
+          />
+        )}
+        {UserSession.canDeleteInstructions() && (
+          <Button
+            icon="pi pi-trash"
+            className="p-button-rounded p-button-danger m-1"
+            tooltip="Eliminar instrucciones"
+            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
+            onClick={() => confirmDeleteProduct(rowData)}
+          />
+        )}
       </React.Fragment>
     );
   };
@@ -336,22 +369,26 @@ export default function Home() {
           className="w-full lg:w-auto"
         />
       </span>
-      <div className="mt-3 md:mt-0 flex justify-content-end">
-        <Button
-          icon="pi pi-plus"
-          className="mr-2 p-button-rounded"
-          onClick={openNew}
-          tooltip="New"
-          tooltipOptions={{ position: 'bottom' }}
-        />
-        <Button
-          icon="pi pi-trash"
-          className="p-button-danger mr-2 p-button-rounded"
-          onClick={confirmDeleteSelected}
-          disabled={!selectedProducts || !selectedProducts.length}
-          tooltip="Delete"
-          tooltipOptions={{ position: 'bottom' }}
-        />
+      <div className="mt-3 md:mt-0 flex justify-content-end mr-8">
+        {UserSession.canCreateInstructions() && (
+          <Button
+            icon="pi pi-plus"
+            className="mr-2 p-button-rounded"
+            onClick={openNew}
+            tooltip="Crear instrucciones"
+            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
+          />
+        )}
+        {UserSession.canDeleteInstructions() && (
+          <Button
+            icon="pi pi-trash"
+            className="p-button-danger mr-2 p-button-rounded"
+            onClick={confirmDeleteSelected}
+            disabled={!selectedProducts || !selectedProducts.length}
+            tooltip="Eliminar selección"
+            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
+          />
+        )}
       </div>
     </div>
   );
@@ -418,7 +455,7 @@ export default function Home() {
           rows={10}
           rowsPerPageOptions={[5, 10, 25]}
           paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
+          currentPageReportTemplate="{first} - {last} de {totalRecords}"
           globalFilter={globalFilter}
           header={header}
           responsiveLayout="scroll"
@@ -462,13 +499,28 @@ export default function Home() {
         <DropdownFilter
           material={setMaterial}
           materials={materials}
-          instruction={product}
+          instruction={currentProduct}
           provincia={setProvincia}
           departamento={setDepartamento}
           municipio={setMunicipio}
           preloaded={preloaded}
         ></DropdownFilter>
-        <MDEditor height={600} value={markdown} onChange={setMarkdown} />
+        <div className="flex flex-row justify-content-end">
+          <label className="flex align-items-center justify-content-center m-1">
+            Habilitada:{' '}
+          </label>
+          <InputSwitch
+            className="flex align-items-center justify-content-center m-1"
+            checked={editable}
+            onChange={e => setEditable(e.value)}
+          ></InputSwitch>
+        </div>
+        <MDEditor
+          data-color-mode="light"
+          height={550}
+          value={markdown}
+          onChange={setMarkdown}
+        />
       </Dialog>
 
       <Dialog
@@ -481,13 +533,14 @@ export default function Home() {
         <DropdownFilter
           material={setMaterial}
           materials={materials}
-          instruction={product}
+          instruction={currentProduct}
           provincia={setProvincia}
           departamento={setDepartamento}
           municipio={setMunicipio}
           preloaded={preloaded}
         ></DropdownFilter>
         <MDEditor
+          data-color-mode="light"
           height={600}
           value={markdown}
           onChange={setMarkdown}
@@ -507,9 +560,7 @@ export default function Home() {
       >
         <div className="flex align-items-center justify-content-center">
           <i className="pi pi-exclamation-triangle mr-3 text-4xl" />
-          {product && (
-            <span>Estás seguro de que quieres eliminar la instrucción?</span>
-          )}
+          <span>Estás seguro de que quieres eliminar la instrucción?</span>
         </div>
       </Dialog>
 
@@ -523,12 +574,10 @@ export default function Home() {
       >
         <div className="flex align-items-center justify-content-center">
           <i className="pi pi-exclamation-triangle mr-3 text-4xl" />
-          {product && (
-            <span>
-              Estás seguro de que quieres eliminar las instrucciones
-              seleccionadas?
-            </span>
-          )}
+          <span>
+            Estás seguro de que quieres eliminar las instrucciones
+            seleccionadas?
+          </span>
         </div>
       </Dialog>
     </PrivateRoute>

@@ -35,13 +35,41 @@ const getUserById = async firebaseId => {
 
 const updateUserPermissions = async (userId, permissions) => {
   try {
-    const response = await axios.patch(
+    await axios.patch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`,
       { permissions: permissions }
     );
+    return true;
   } catch (e) {
     console.log(e);
+    return false;
   }
 };
 
-export { saveNewUser, getUserList, getUserById, updateUserPermissions };
+const updateInstruction = async (instructionId, body) => {
+  try {
+    await axios.patch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/pages/${instructionId}`,
+      body
+    );
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+};
+
+const deleteUserById = async firebaseId => {
+  await axios.delete(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}`
+  );
+};
+
+export {
+  saveNewUser,
+  getUserList,
+  getUserById,
+  updateUserPermissions,
+  deleteUserById,
+  updateInstruction
+};

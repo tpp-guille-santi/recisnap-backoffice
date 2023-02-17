@@ -64,74 +64,82 @@ const DropdownFilter = props => {
   };
 
   return (
-    <div className="flex flex-wrap gap-3 justify-content-center my-4">
-      <label
-        htmlFor="dropdownMaterial"
-        className="flex align-items-center justify-content-center "
-      >
-        Material:
-      </label>
-      <Dropdown
-        inputId="dropdownMaterial"
-        className="flex align-items-center justify-content-center "
-        optionLabel="name"
-        value={material}
-        options={props.materials}
-        placeholder="Seleccione un material"
-        onChange={e => materialSelected(e.value)}
-        required
-        autoFocus
-        disabled={props.preloaded}
-      ></Dropdown>
-      <label
-        htmlFor="dropdownProvincia"
-        className="flex align-items-center justify-content-center "
-      >
-        Provincia:
-      </label>
-      <Dropdown
-        inputId="dropdownProvincia"
-        className="flex align-items-center justify-content-center "
-        optionLabel="nombre"
-        value={province}
-        options={data.provincias}
-        placeholder="Seleccione una provincia"
-        onChange={e => provinceSelected(e.value)}
-        disabled={props.preloaded}
-      ></Dropdown>
-      <label
-        htmlFor="dropdownDepartamento"
-        className="flex align-items-center justify-content-center "
-      >
-        Departamento:
-      </label>
-      <Dropdown
-        inputId="dropdownDepartamento"
-        className="flex align-items-center justify-content-center "
-        optionLabel="nombre"
-        value={deparment}
-        options={departmentList ? departmentList : [deparment]}
-        placeholder="Seleccione un departamento"
-        onChange={e => departmentSelected(e.value)}
-        disabled={props.preloaded || departmentDisabled}
-      ></Dropdown>
-      <label
-        htmlFor="dropdownMunicipio"
-        className="flex align-items-center justify-content-center "
-      >
-        Municipio:
-      </label>
-      <Dropdown
-        inputId="dropdownMunicipio"
-        className="flex align-items-center justify-content-center "
-        optionLabel="nombre"
-        value={municipio}
-        options={municipiosList ? municipiosList : [municipio]}
-        placeholder="Seleccione un municipio"
-        emptyMessage="El departamento no posee municipios"
-        onChange={e => municipioSelected(e.value)}
-        disabled={props.preloaded || municipioDisabled}
-      ></Dropdown>
+    <div class="formgrid grid">
+      <div class="field col-12 md:col-6">
+        <label
+          htmlFor="dropdownMaterial"
+          className="flex flex-1 align-items-center justify-content-start"
+        >
+          Material:
+        </label>
+        <Dropdown
+          inputId="dropdownMaterial"
+          className="flex flex-1 align-items-center justify-content-center"
+          optionLabel="name"
+          value={material}
+          options={props.materials}
+          placeholder="Seleccione un material"
+          onChange={e => materialSelected(e.value)}
+          required
+          autoFocus
+          disabled={props.preloaded}
+        ></Dropdown>
+      </div>
+      <div class="field col-12 md:col-6">
+        <label
+          htmlFor="dropdownProvincia"
+          className="flex flex-1 align-items-center justify-content-start"
+        >
+          Provincia:
+        </label>
+        <Dropdown
+          inputId="dropdownProvincia"
+          className="flex flex-1 align-items-center justify-content-center"
+          optionLabel="nombre"
+          value={province}
+          options={data.provincias}
+          placeholder="Seleccione una provincia"
+          onChange={e => provinceSelected(e.value)}
+          disabled={props.preloaded}
+        ></Dropdown>
+      </div>
+      <div class="field col-12 md:col-6">
+        <label
+          htmlFor="dropdownDepartamento"
+          className="flex flex-1 align-items-center justify-content-start"
+        >
+          Departamento:
+        </label>
+        <Dropdown
+          inputId="dropdownDepartamento"
+          className="flex flex-1 align-items-center justify-content-center"
+          optionLabel="nombre"
+          value={deparment}
+          options={departmentList ? departmentList : [deparment]}
+          placeholder="Seleccione un departamento"
+          onChange={e => departmentSelected(e.value)}
+          disabled={props.preloaded || departmentDisabled}
+        ></Dropdown>
+      </div>
+      <div class="field col-12 md:col-6">
+        <label
+          htmlFor="dropdownMunicipio"
+          className="flex flex-1 align-items-center justify-content-start"
+        >
+          Municipio:
+        </label>
+        <Dropdown
+          inputId="dropdownMunicipio"
+          className="flex flex-1 align-items-center justify-content-center"
+          optionLabel="nombre"
+          value={municipio}
+          options={municipiosList ? municipiosList : [municipio]}
+          placeholder="Seleccione un municipio"
+          emptyMessage="El departamento no posee municipios"
+          onChange={e => municipioSelected(e.value)}
+          disabled={props.preloaded || municipioDisabled}
+        ></Dropdown>
+      </div>
     </div>
   );
 };

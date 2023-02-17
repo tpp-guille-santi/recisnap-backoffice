@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import logo from '../public/logo.png';
 import ProfileDropdown from '../components/profileDropdown';
+import UserSession from '../utils/userSession';
 
 const isologo = () => {
   return (
@@ -29,14 +30,18 @@ const Navbar = () => {
         >
           Instrucciones
         </Link>
-        <i className="pi pi-users ml-4"></i>
-        <Link
-          style={{ textDecoration: 'none' }}
-          className="text-bold"
-          href="/users"
-        >
-          Usuarios
-        </Link>
+        {UserSession.canViewUsers() && (
+          <div>
+            <i className="pi pi-users ml-4"></i>
+            <Link
+              style={{ textDecoration: 'none' }}
+              className="text-bold"
+              href="/users"
+            >
+              Usuarios
+            </Link>
+          </div>
+        )}
       </nav>
       <ProfileDropdown></ProfileDropdown>
     </div>

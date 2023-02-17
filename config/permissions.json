@@ -1,0 +1,42 @@
+[
+  {
+    "id": "view_instructions",
+    "label": "Ver instrucciones",
+    "icon": "pi pi-eye"
+  },
+  {
+    "id": "create_instructions",
+    "label": "Crear instrucciones",
+    "icon": "pi pi-plus"
+  },
+  {
+    "id": "block_instructions",
+    "label": "Bloquear instrucciones",
+    "icon": "pi pi-ban"
+  },
+  {
+    "id": "edit_instructions",
+    "label": "Editar instrucciones",
+    "icon": "pi pi-file-edit"
+  },
+  {
+    "id": "delete_instructions",
+    "label": "Eliminar instrucciones",
+    "icon": "pi pi-times-circle"
+  },
+  {
+    "id": "view_users",
+    "label": "Ver usuarios",
+    "icon": "pi pi-user"
+  },
+  {
+    "id": "edit_user_permissions",
+    "label": "Editar permisos de usuarios",
+    "icon": "pi pi-user-edit"
+  },
+  {
+    "id": "delete_users",
+    "label": "Eliminar usuarios",
+    "icon": "pi pi-user-minus"
+  }
+]
