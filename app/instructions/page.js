@@ -117,7 +117,7 @@ export default function Home() {
   async function getInstructions() {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/pages`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions`
       );
       return response.data;
     } catch (e) {
@@ -141,7 +141,7 @@ export default function Home() {
   async function deleteInstruction(instruciton) {
     try {
       const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/pages/${instruciton.id}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruciton.id}`
       );
       return true;
     } catch (e) {
@@ -197,7 +197,7 @@ export default function Home() {
           departamento: currentProduct.departamento
         };
         const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/pages`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions`,
           body
         );
 

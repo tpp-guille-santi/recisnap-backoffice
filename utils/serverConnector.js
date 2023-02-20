@@ -49,7 +49,7 @@ const updateUserPermissions = async (userId, permissions) => {
 const updateInstruction = async (instructionId, body) => {
   try {
     await axios.patch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/pages/${instructionId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instructionId}`,
       body
     );
     return true;

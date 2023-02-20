@@ -64,8 +64,8 @@ const DropdownFilter = props => {
   };
 
   return (
-    <div class="formgrid grid">
-      <div class="field col-12 md:col-6">
+    <div className="formgrid grid">
+      <div className="field col-12 md:col-6">
         <label
           htmlFor="dropdownMaterial"
           className="flex flex-1 align-items-center justify-content-start"
@@ -85,7 +85,7 @@ const DropdownFilter = props => {
           disabled={props.preloaded}
         ></Dropdown>
       </div>
-      <div class="field col-12 md:col-6">
+      <div className="field col-12 md:col-6">
         <label
           htmlFor="dropdownProvincia"
           className="flex flex-1 align-items-center justify-content-start"
@@ -103,7 +103,7 @@ const DropdownFilter = props => {
           disabled={props.preloaded}
         ></Dropdown>
       </div>
-      <div class="field col-12 md:col-6">
+      <div className="field col-12 md:col-6">
         <label
           htmlFor="dropdownDepartamento"
           className="flex flex-1 align-items-center justify-content-start"
@@ -121,7 +121,7 @@ const DropdownFilter = props => {
           disabled={props.preloaded || departmentDisabled}
         ></Dropdown>
       </div>
-      <div class="field col-12 md:col-6">
+      <div className="field col-12 md:col-6">
         <label
           htmlFor="dropdownMunicipio"
           className="flex flex-1 align-items-center justify-content-start"
