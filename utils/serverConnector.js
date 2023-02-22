@@ -46,6 +46,25 @@ const updateUserPermissions = async (userId, permissions) => {
   }
 };
 
+const createInstruction = async instruction => {
+  try {
+    const body = {
+      material_name: instruction.material_name,
+      editable: instruction.editable,
+      lat: instruction.lat,
+      lon: instruction.lon
+    };
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions`,
+      body
+    );
+    return response.data;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
 const updateInstruction = async (instructionId, body) => {
   try {
     await axios.patch(
@@ -71,5 +90,6 @@ export {
   getUserById,
   updateUserPermissions,
   deleteUserById,
+  createInstruction,
   updateInstruction
 };

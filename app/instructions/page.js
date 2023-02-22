@@ -1,4 +1,10 @@
 'use client';
+import Head from 'next/head';
+import Link from 'next/link';
+import Script from 'next/script';
+import 'leaflet/dist/leaflet.css';
+import { Steps } from 'primereact/steps';
+import { Dropdown } from 'primereact/dropdown';
 import React, { useState, useEffect, useRef } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -7,7 +13,6 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import axios from 'axios';
-import DropdownFilter from '../../components/dropdownFilter';
 import MDEditor from '@uiw/react-md-editor';
 import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
@@ -17,32 +22,49 @@ import { getStorage, getBytes, ref, uploadString } from 'firebase/storage';
 import Navbar from '../../components/navbar';
 import UserSession from '../../utils/userSession';
 import { InputSwitch } from 'primereact/inputswitch';
-import { updateInstruction } from '../../utils/serverConnector';
+import {
+  createInstruction,
+  updateInstruction
+} from '../../utils/serverConnector';
+import CustomMap from '../../components/location/map';
 
 export default function Home() {
-  let emptyProduct = {
+  let emptyInstruction = {
     id: null,
     material_name: '',
     editable: false,
-    url: '',
-    municipio: null,
     provincia: null,
-    departamento: null
+    departamento: null,
+    municipio: null,
+    lat: null,
+    lon: null,
+    geo_json: {
+      type: 'Point',
+      coordinates: [null, null]
+    }
   };
+
+  const DEFAULT_MAP_CENTER = [-34.591371, -58.42398];
 
   const [preloaded, setPreloaded] = useState(false);
   const [products, setProducts] = useState(null);
   const [materials, setMaterials] = useState(null);
   const [productDialog, setProductDialog] = useState(false);
+  const [createStep1, setCreateStep1] = useState(true);
   const [viewProductDialog, setViewProductDialog] = useState(false);
+  const [viewLocationDialog, setViewLocationDialog] = useState(false);
+  setViewLocationDialog;
   const [deleteProductDialog, setDeleteProductDialog] = useState(false);
   const [deleteProductsDialog, setDeleteProductsDialog] = useState(false);
-  const [currentProduct, setCurrentProduct] = useState(emptyProduct);
+  const [currentInstruction, setCurrentInstruction] =
+    useState(emptyInstruction);
   const [selectedProducts, setSelectedProducts] = useState(null);
+  const [markerPosition, setMarkerPosition] = useState(null);
+  const [map, setMap] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [markdown, setMarkdown] = useState('');
   const [templateMarkdown, setTemplateMarkdown] = useState('');
-  const [editable, setEditable] = useState(false);
+  const [selectedMaterial, setSelectedMaterial] = useState('');
   const toast = useRef(null);
   const dt = useRef(null);
 
@@ -52,7 +74,7 @@ export default function Home() {
     return new TextDecoder().decode(bytes);
   };
 
-  const getTemplateMarkdown = async product => {
+  const getTemplateMarkdown = async () => {
     try {
       return getMarkdown(`/markdowns/template.md`);
     } catch (e) {
@@ -62,32 +84,22 @@ export default function Home() {
 
   const storage = getStorage(app);
 
-  const getFilename = product => {
-    return [
-      product.provincia ?? '',
-      product.departamento ?? '',
-      product.municipio ?? '',
-      product.material_name ?? ''
-    ].join('-');
-  };
-
-  const uploadInstructionsMarkdown = async product => {
+  const uploadInstructionsMarkdown = async instruction => {
     try {
-      const storageRef = ref(
-        storage,
-        `/markdowns/${encodeURI(getFilename(product))}.md`
-      );
+      const storageRef = ref(storage, `/markdowns/${instruction.id}.md`);
       await uploadString(storageRef, markdown);
+      return true;
     } catch (e) {
       console.log(e);
+      return false;
     }
   };
 
-  const setMarkdownFromInstructions = async product => {
+  const setMarkdownFromInstructions = async instruction => {
     let markdown = templateMarkdown;
     try {
       const potentialMarkdown = await getMarkdown(
-        `/markdowns/${encodeURI(getFilename(product))}.md`
+        `/markdowns/${instruction.id}.md`
       );
       if (potentialMarkdown != null && potentialMarkdown.trim() !== '') {
         markdown = potentialMarkdown;
@@ -96,22 +108,6 @@ export default function Home() {
       console.log(e);
     }
     setMarkdown(markdown);
-  };
-
-  const setMaterial = argument => {
-    setCurrentProduct({ ...currentProduct, material_name: argument.name });
-  };
-
-  const setProvincia = argument => {
-    setCurrentProduct({ ...currentProduct, provincia: argument.nombre });
-  };
-
-  const setMunicipio = argument => {
-    setCurrentProduct({ ...currentProduct, municipio: argument.nombre });
-  };
-
-  const setDepartamento = argument => {
-    setCurrentProduct({ ...currentProduct, departamento: argument.nombre });
   };
 
   async function getInstructions() {
@@ -162,14 +158,18 @@ export default function Home() {
   }, []);
 
   const openNew = () => {
-    setCurrentProduct(emptyProduct);
+    setCurrentInstruction(emptyInstruction);
     setMarkdown(templateMarkdown);
     setProductDialog(true);
+    setCreateStep1(true);
+    setMarkerPosition(null);
     setPreloaded(false);
   };
 
   const hideViewDialog = () => {
     setViewProductDialog(false);
+    setViewLocationDialog(false);
+    setMarkerPosition(null);
     setMarkdown('');
   };
 
@@ -187,59 +187,75 @@ export default function Home() {
   };
 
   const createProduct = async () => {
-    if (currentProduct.material_name && currentProduct.provincia) {
-      try {
-        const body = {
-          material_name: currentProduct.material_name,
-          editable: true,
-          municipio: currentProduct.municipio,
-          provincia: currentProduct.provincia,
-          departamento: currentProduct.departamento
-        };
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions`,
-          body
-        );
-
-        const _product = response.data;
-        let _products = [...products];
-        _products.push(_product);
-        setProducts(_products);
-        toast.current.show({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Instrucción creada',
-          life: 3000
-        });
-      } catch (e) {
-        console.log(e);
-        return [];
-      }
-    }
-  };
-
-  const updateProduct = async () => {
-    const success = await updateInstruction(currentProduct.id, {
-      editable: editable
-    });
-    if (success) {
-      const product = products.find(
-        product => product.id === currentProduct.id
-      );
-      product.editable = editable;
-      setProducts(products);
+    const instruction = await createInstruction(currentInstruction);
+    if (instruction === null) {
       toast.current.show({
-        severity: 'success',
-        summary: 'Éxito',
-        detail: 'Instrucción actualizada',
+        severity: 'Error',
+        summary: 'Error',
+        detail: 'Error al crear la instrucción',
         life: 3000
       });
       return;
     }
+    const uploaded = uploadInstructionsMarkdown(instruction);
+    if (!uploaded) {
+      toast.current.show({
+        severity: 'Error',
+        summary: 'Error',
+        detail: 'Error al crear la instrucción',
+        life: 3000
+      });
+      return;
+    }
+    let _products = [...products];
+    _products.push(instruction);
+    setProducts(_products);
+    setProductDialog(false);
+    setCurrentInstruction(emptyInstruction);
+    setMarkdown('');
     toast.current.show({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Error al intentar actualizar la instrucción',
+      severity: 'success',
+      summary: 'Éxito',
+      detail: 'Instrucción creada',
+      life: 3000
+    });
+  };
+
+  const updateProduct = async () => {
+    const success = await updateInstruction(currentInstruction.id, {
+      editable: currentInstruction.editable
+    });
+    if (!success) {
+      toast.current.show({
+        severity: 'Error',
+        summary: 'Error',
+        detail: 'Error al actualizar la instrucción',
+        life: 3000
+      });
+      return;
+    }
+    const uploaded = uploadInstructionsMarkdown(currentInstruction);
+    if (!uploaded) {
+      toast.current.show({
+        severity: 'Error',
+        summary: 'Error',
+        detail: 'Error al actualizar la instrucción',
+        life: 3000
+      });
+      return;
+    }
+    const product = products.find(
+      product => product.id === currentInstruction.id
+    );
+    product.editable = currentInstruction.editable;
+    setProducts(products);
+    setProductDialog(false);
+    setCurrentInstruction(emptyInstruction);
+    setMarkdown('');
+    toast.current.show({
+      severity: 'success',
+      summary: 'Éxito',
+      detail: 'Instrucción actualizada',
       life: 3000
     });
   };
@@ -250,28 +266,32 @@ export default function Home() {
     } else {
       await createProduct();
     }
-    uploadInstructionsMarkdown(currentProduct);
-    setProductDialog(false);
-    setCurrentProduct(emptyProduct);
-    setMarkdown('');
   };
 
-  const viewProduct = product => {
-    setCurrentProduct({ ...product });
-    setMarkdownFromInstructions(product);
+  const viewLocation = instruction => {
+    setCurrentInstruction({ ...instruction });
+    setViewLocationDialog(true);
+  };
+
+  const viewProduct = instruction => {
+    setCurrentInstruction({ ...instruction });
+    setMarkdownFromInstructions(instruction);
     setViewProductDialog(true);
   };
 
-  const editProduct = product => {
-    setCurrentProduct({ ...product });
-    setEditable(product.editable);
-    setMarkdownFromInstructions(product);
+  const editProduct = instruction => {
+    setCurrentInstruction({ ...instruction });
+    setMarkdownFromInstructions(instruction);
+    setCreateStep1(false);
     setProductDialog(true);
     setPreloaded(true);
+    setSelectedMaterial(
+      materials.find(val => val.name === instruction.material_name)
+    );
   };
 
   const confirmDeleteProduct = product => {
-    setCurrentProduct(product);
+    setCurrentInstruction(product);
     setDeleteProductDialog(true);
   };
 
@@ -289,7 +309,7 @@ export default function Home() {
     let _products = products.filter(val => val.id !== currentProduct.id);
     setProducts(_products);
     setDeleteProductDialog(false);
-    setCurrentProduct(emptyProduct);
+    setCurrentInstruction(currentInstruction);
     toast.current.show({
       severity: 'success',
       summary: 'Éxito',
@@ -334,6 +354,13 @@ export default function Home() {
           tooltip="Ver instrucciones"
           tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
           onClick={() => viewProduct(rowData)}
+        />
+        <Button
+          icon="pi pi-map-marker"
+          className="p-button-rounded p-button-warning m-1"
+          tooltip="Ver ubicación"
+          tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
+          onClick={() => viewLocation(rowData)}
         />
         {(UserSession.canBlockInstructions() ||
           (UserSession.canEditInstructions() && rowData.editable)) && (
@@ -397,10 +424,36 @@ export default function Home() {
       <Button
         label="Cancelar"
         icon="pi pi-times"
-        className="p-button-text"
+        className="p-button-text mt-2"
         onClick={hideDialog}
       />
-      <Button label="Guardar" icon="pi pi-check" onClick={saveProduct} />
+      {createStep1 ? (
+        <Button
+          label="Siguiente"
+          icon="pi pi-arrow-right"
+          className="mt-2"
+          onClick={() => {
+            setCurrentInstruction({
+              ...currentInstruction,
+              lat: markerPosition.lat,
+              lon: markerPosition.lng,
+              geo_json: {
+                type: 'Point',
+                coordinates: [markerPosition.lng, markerPosition.lat]
+              }
+            });
+            setCreateStep1(false);
+          }}
+          disabled={!markerPosition}
+        />
+      ) : (
+        <Button
+          label="Guardar"
+          icon="pi pi-check"
+          onClick={saveProduct}
+          disabled={!currentInstruction.material_name}
+        />
+      )}
     </React.Fragment>
   );
 
@@ -409,13 +462,13 @@ export default function Home() {
       <Button
         label="No"
         icon="pi pi-times"
-        className="p-button-text"
+        className="p-button-text  mt-2"
         onClick={hideDeleteProductDialog}
       />
       <Button
         label="Si"
         icon="pi pi-check"
-        className="p-button-text"
+        className="p-button-text  mt-2"
         onClick={deleteProduct}
       />
     </React.Fragment>
@@ -426,20 +479,126 @@ export default function Home() {
       <Button
         label="No"
         icon="pi pi-times"
-        className="p-button-text"
+        className="p-button-text  mt-2"
         onClick={hideDeleteProductsDialog}
       />
       <Button
         label="Si"
         icon="pi pi-check"
-        className="p-button-text"
+        className="p-button-text  mt-2"
         onClick={deleteSelectedProducts}
       />
     </React.Fragment>
   );
 
+  const createDialog = () => {
+    const step1Div = () => {
+      return (
+        createStep1 && (
+          <div>
+            <CustomMap
+              center={DEFAULT_MAP_CENTER}
+              markerPosition={markerPosition}
+              setMarkerPosition={setMarkerPosition}
+              map={map}
+              setMap={setMap}
+            ></CustomMap>
+          </div>
+        )
+      );
+    };
+    const step2Div = () => {
+      return (
+        !createStep1 && (
+          <div>
+            <Dropdown
+              className="flex flex-1 align-items-center justify-content-center capitalize my-2"
+              optionLabel="name"
+              value={selectedMaterial}
+              options={materials}
+              placeholder="Seleccione un material"
+              onChange={e => {
+                setSelectedMaterial(e.value);
+                setCurrentInstruction({
+                  ...currentInstruction,
+                  material_name: e.value.name
+                });
+              }}
+              required
+              autoFocus
+              disabled={preloaded}
+            ></Dropdown>
+            <div className="flex flex-row justify-content-end my-2">
+              <label className="flex align-items-center justify-content-center m-1">
+                Habilitada:{' '}
+              </label>
+              <InputSwitch
+                className="flex align-items-center justify-content-center m-1"
+                checked={currentInstruction.editable}
+                onChange={e =>
+                  setCurrentInstruction({
+                    ...currentInstruction,
+                    editable: e.value
+                  })
+                }
+              ></InputSwitch>
+            </div>
+            <MDEditor
+              data-color-mode="light"
+              height={550}
+              value={markdown}
+              onChange={setMarkdown}
+            />
+          </div>
+        )
+      );
+    };
+
+    const items = [
+      {
+        label: 'Ubicación'
+      },
+      {
+        label: 'Contenido'
+      }
+    ];
+    return (
+      <Dialog
+        visible={productDialog}
+        modal
+        maximized={true}
+        className="p-fluid"
+        footer={productDialogFooter}
+        onHide={hideDialog}
+      >
+        {!preloaded && (
+          <Steps
+            model={items}
+            activeIndex={createStep1 ? 0 : 1}
+            className="mx-8 mb-2"
+          />
+        )}
+        {step1Div()}
+        {step2Div()}
+      </Dialog>
+    );
+  };
+
   return (
     <PrivateRoute>
+      <Head>
+        <Link
+          rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+          integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+          crossOrigin=""
+        />
+      </Head>
+      <Script
+        src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+        crossOrigin=""
+      />
       <Navbar></Navbar>
       <Toast ref={toast} />
       <div className="m-5">
@@ -488,57 +647,14 @@ export default function Home() {
           <Column body={actionBodyTemplate} exportable={false}></Column>
         </DataTable>
       </div>
-      <Dialog
-        visible={productDialog}
-        modal
-        maximized={true}
-        className="p-fluid"
-        footer={productDialogFooter}
-        onHide={hideDialog}
-      >
-        <DropdownFilter
-          material={setMaterial}
-          materials={materials}
-          instruction={currentProduct}
-          provincia={setProvincia}
-          departamento={setDepartamento}
-          municipio={setMunicipio}
-          preloaded={preloaded}
-        ></DropdownFilter>
-        <div className="flex flex-row justify-content-end">
-          <label className="flex align-items-center justify-content-center m-1">
-            Habilitada:{' '}
-          </label>
-          <InputSwitch
-            className="flex align-items-center justify-content-center m-1"
-            checked={editable}
-            onChange={e => setEditable(e.value)}
-          ></InputSwitch>
-        </div>
-        <MDEditor
-          data-color-mode="light"
-          height={550}
-          value={markdown}
-          onChange={setMarkdown}
-        />
-      </Dialog>
+      {createDialog()}
 
       <Dialog
+        className="w-6"
         visible={viewProductDialog}
         modal
-        maximized={true}
-        className="p-fluid"
         onHide={hideViewDialog}
       >
-        <DropdownFilter
-          material={setMaterial}
-          materials={materials}
-          instruction={currentProduct}
-          provincia={setProvincia}
-          departamento={setDepartamento}
-          municipio={setMunicipio}
-          preloaded={preloaded}
-        ></DropdownFilter>
         <MDEditor
           data-color-mode="light"
           height={600}
@@ -548,6 +664,20 @@ export default function Home() {
           hideToolbar={true}
           preview={'preview'}
         />
+      </Dialog>
+
+      <Dialog
+        className="w-6"
+        visible={viewLocationDialog}
+        modal
+        onHide={hideViewDialog}
+      >
+        <CustomMap
+          center={[currentInstruction.lat, currentInstruction.lon]}
+          markerPosition={[currentInstruction.lat, currentInstruction.lon]}
+          map={map}
+          setMap={setMap}
+        ></CustomMap>
       </Dialog>
 
       <Dialog
