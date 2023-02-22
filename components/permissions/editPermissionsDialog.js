@@ -10,7 +10,6 @@ const EditPermissionsDialog = props => {
   const [checkedPermissions, setCheckedPermissions] = useState([]);
 
   function changePermission(id, value) {
-    console.log(checkedPermissions);
     const permission = checkedPermissions.find(
       permission => permission.id === id
     );
@@ -30,11 +29,9 @@ const EditPermissionsDialog = props => {
   }, [props.permissions]);
 
   const savePermissions = async () => {
-    console.log(checkedPermissions);
     const permissions = checkedPermissions
       .filter(permission => !!permission.value)
       .map(permission => permission.id);
-    console.log(permissions);
     const success = await updateUserPermissions(props.editedUser, permissions);
     if (success) {
       props.save(props.editedUser, permissions);
