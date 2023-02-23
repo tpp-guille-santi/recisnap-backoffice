@@ -25,9 +25,10 @@ const getUserList = async () => {
 };
 
 const getUserById = async firebaseId => {
-  /*const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}`
-    );*/
+  console.log('Getting user by id');
+  console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}`);
+  console.log(`${firebaseId}`);
+  console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}`);
   return await axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}`
   );
