@@ -4,6 +4,7 @@ import Image from 'next/image';
 import logo from '../public/logo.png';
 import ProfileDropdown from '../components/profileDropdown';
 import UserSession from '../utils/userSession';
+import { usePathname } from 'next/navigation';
 
 const isologo = () => {
   return (
@@ -19,6 +20,10 @@ const isologo = () => {
 };
 
 const Navbar = () => {
+  const pathname = usePathname();
+  const instructionsColor =
+    pathname === '/instructions' ? '' : 'text-color-secondary';
+  const usersColor = pathname === '/users' ? '' : 'text-color-secondary';
   return (
     <div className="flex justify-content-between align-items-center px-4 mb-4">
       {isologo()}
@@ -26,7 +31,7 @@ const Navbar = () => {
         <i className="pi pi-book"></i>
         <Link
           style={{ textDecoration: 'none' }}
-          className="text-bold"
+          className={`text-bold ${instructionsColor}`}
           href="/instructions"
         >
           Instrucciones
@@ -36,7 +41,7 @@ const Navbar = () => {
             <i className="pi pi-users ml-4"></i>
             <Link
               style={{ textDecoration: 'none' }}
-              className="text-bold"
+              className={`text-bold ${usersColor}`}
               href="/users"
             >
               Usuarios
