@@ -17,65 +17,75 @@ const UserSession = (function () {
   };
 
   const getUserName = () => {
-    const name = getUser().name ?? null;
+    const user = getUser();
+    const name = user.name ?? null;
     return name;
   };
 
   const getUserFirebaseUid = () => {
-    const firebase_uid = getUser().firebase_uid ?? null;
+    const user = getUser();
+    const firebase_uid = user.firebase_uid ?? null;
     return firebase_uid;
   };
 
+  const getUserPermissions = () => {
+    const user = getUser();
+    const permissions = user.permissions ?? [];
+    return permissions;
+  };
+
   const canViewUsers = () => {
-    const permissions = getUser().permissions ?? [];
+    const permissions = getUserPermissions();
     return permissions.includes('view_users');
   };
 
   const canEditPermissions = () => {
-    const permissions = getUser().permissions ?? [];
+    const permissions = getUserPermissions()
     return permissions.includes('edit_user_permissions');
   };
 
   const canDeleteUsers = () => {
-    const permissions = getUser().permissions ?? [];
+    const permissions = getUserPermissions()
     return permissions.includes('delete_users');
   };
 
   const canViewUserActions = () => {
-    const permissions = getUser().permissions ?? [];
+    const permissions = getUserPermissions()
     return permissions.some(r =>
       ['edit_user_permissions', 'delete_users'].includes(r)
     );
   };
 
   const canDeleteInstructions = () => {
-    const permissions = getUser().permissions ?? [];
+    const permissions = getUserPermissions()
     return permissions.includes('delete_instructions');
   };
 
   const canCreateInstructions = () => {
-    const permissions = getUser().permissions ?? [];
+    const permissions = getUserPermissions()
     return permissions.includes('create_instructions');
   };
 
   const canEditInstructions = () => {
-    const permissions = getUser().permissions ?? [];
+    const permissions = getUserPermissions()
     return permissions.includes('edit_instructions');
   };
 
   const canBlockInstructions = () => {
-    const permissions = getUser().permissions ?? [];
+    const permissions = getUserPermissions()
     return permissions.includes('block_instructions');
   };
 
   const canViewInstructions = () => {
-    const permissions = getUser().permissions ?? [];
+    const permissions = getUserPermissions()
     return permissions.includes('view_instructions');
   };
 
   const logout = async () => {
     try {
-      sessionStorage.setItem('user', null);
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('user', null);
+      }
       const auth = getAuth(app);
       signOut(auth);
     } catch (e) {
