@@ -1,19 +1,20 @@
 'use client';
 import { app } from '../app/firebase-config';
 import { getAuth, signOut } from 'firebase/auth';
+import { setCookie, getCookie, deleteCookie } from 'cookies-next';
 
 const UserSession = (function () {
   const setUser = userInformation => {
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem('user', JSON.stringify(userInformation.data));
-    }
+    const user = userInformation.data;
+    setCookie('user', user);
   };
 
   const getUser = () => {
-    if (typeof window !== 'undefined') {
-      return JSON.parse(sessionStorage.getItem('user'));
+    const user = getCookie('user');
+    if (!user) {
+      return null;
     }
-    return null;
+    return JSON.parse(user);
   };
 
   const getUserName = () => {
@@ -40,52 +41,50 @@ const UserSession = (function () {
   };
 
   const canEditPermissions = () => {
-    const permissions = getUserPermissions()
+    const permissions = getUserPermissions();
     return permissions.includes('edit_user_permissions');
   };
 
   const canDeleteUsers = () => {
-    const permissions = getUserPermissions()
+    const permissions = getUserPermissions();
     return permissions.includes('delete_users');
   };
 
   const canViewUserActions = () => {
-    const permissions = getUserPermissions()
+    const permissions = getUserPermissions();
     return permissions.some(r =>
       ['edit_user_permissions', 'delete_users'].includes(r)
     );
   };
 
   const canDeleteInstructions = () => {
-    const permissions = getUserPermissions()
+    const permissions = getUserPermissions();
     return permissions.includes('delete_instructions');
   };
 
   const canCreateInstructions = () => {
-    const permissions = getUserPermissions()
+    const permissions = getUserPermissions();
     return permissions.includes('create_instructions');
   };
 
   const canEditInstructions = () => {
-    const permissions = getUserPermissions()
+    const permissions = getUserPermissions();
     return permissions.includes('edit_instructions');
   };
 
   const canBlockInstructions = () => {
-    const permissions = getUserPermissions()
+    const permissions = getUserPermissions();
     return permissions.includes('block_instructions');
   };
 
   const canViewInstructions = () => {
-    const permissions = getUserPermissions()
+    const permissions = getUserPermissions();
     return permissions.includes('view_instructions');
   };
 
   const logout = async () => {
     try {
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('user', null);
-      }
+      deleteCookie('user');
       const auth = getAuth(app);
       signOut(auth);
     } catch (e) {

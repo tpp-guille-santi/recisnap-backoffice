@@ -1,3 +1,4 @@
+'use client';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import LocationMarker from './locationMarker';
 import { useCallback, useEffect } from 'react';

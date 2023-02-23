@@ -44,7 +44,7 @@ function HookForm() {
       await sendPasswordResetEmail(auth, email);
       router.push('/');
     } catch (e) {
-      console.log(e)
+      console.log(e);
       toast.current.show({
         severity: 'error',
         summary: 'Error',

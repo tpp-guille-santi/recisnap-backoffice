@@ -1,5 +1,6 @@
 'use client';
 import Head from 'next/head';
+import { lazy } from 'react';
 import Link from 'next/link';
 import Script from 'next/script';
 import 'leaflet/dist/leaflet.css';
@@ -26,7 +27,7 @@ import {
   createInstruction,
   updateInstruction
 } from '../../utils/serverConnector';
-import CustomMap from '../../components/location/map';
+const CustomMap = lazy(() => import('../../components/location/map'));
 
 export default function Home() {
   let emptyInstruction = {

@@ -1,3 +1,4 @@
+'use client';
 import { Marker } from 'react-leaflet';
 const LocationMarker = props => {
   return props.markerPosition === null ? null : (

@@ -1,3 +1,4 @@
+'use client';
 import UserSession from '../utils/userSession';
 import { redirect } from 'next/navigation';
 
