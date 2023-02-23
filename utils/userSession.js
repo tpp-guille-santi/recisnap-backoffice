@@ -4,12 +4,26 @@ import { getAuth, signOut } from 'firebase/auth';
 
 const UserSession = (function () {
   const setUser = userInformation => {
-    const user = userInformation.data;
-    sessionStorage.setItem('user', JSON.stringify(user));
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('user', JSON.stringify(userInformation.data));
+    }
   };
 
   const getUser = () => {
-    return JSON.parse(sessionStorage.getItem('user'));
+    if (typeof window !== 'undefined') {
+      return JSON.parse(sessionStorage.getItem('user'));
+    }
+    return null;
+  };
+
+  const getUserName = () => {
+    const name = getUser().name ?? null;
+    return name;
+  };
+
+  const getUserFirebaseUid = () => {
+    const firebase_uid = getUser().firebase_uid ?? null;
+    return firebase_uid;
   };
 
   const canViewUsers = () => {
@@ -78,6 +92,8 @@ const UserSession = (function () {
   return {
     setUser: setUser,
     getUser: getUser,
+    getUserName: getUserName,
+    getUserFirebaseUid: getUserFirebaseUid,
     isLoggedIn: isLoggedIn,
     logout: logout,
     canEditPermissions: canEditPermissions,

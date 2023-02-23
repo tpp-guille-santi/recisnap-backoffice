@@ -15,7 +15,7 @@ const ProfileDropdown = () => {
   };
 
   const imageUrl = `https://api.dicebear.com/5.x/fun-emoji/svg?seed=${
-    UserSession.getUser().firebase_uid
+    UserSession.getUserFirebaseUid()
   }.svg`;
 
   const namePlusIcon = () => {
@@ -25,7 +25,7 @@ const ProfileDropdown = () => {
           <Image src={imageUrl} alt="Profile Picture" width={30} height={30} />
         </div>
         <h4 className="flex align-items-center justify-content-center text-color">
-          {UserSession.getUser().name}
+          {UserSession.getUserName()}
         </h4>
       </div>
     );
@@ -50,7 +50,7 @@ const ProfileDropdown = () => {
             />
           </div>
           <h4 className="flex align-items-center justify-content-center m-2">
-            {UserSession.getUser().name}
+            {UserSession.getUserName()}
           </h4>
           <h4 className="flex align-items-center justify-content-center m-2">
             {UserSession.getUser().email}

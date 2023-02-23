@@ -61,7 +61,7 @@ const UsersPage = () => {
   };
 
   const savePermissionsDialog = async (firebase_uid, permissions) => {
-    if (firebase_uid == UserSession.getUser().firebase_uid) {
+    if (firebase_uid == UserSession.getUserFirebaseUid()) {
       await signOut();
     }
     const user = users.find(user => user.firebase_uid === firebase_uid);
