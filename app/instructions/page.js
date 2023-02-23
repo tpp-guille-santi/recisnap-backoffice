@@ -165,6 +165,7 @@ export default function Home() {
     setCreateStep1(true);
     setMarkerPosition(null);
     setPreloaded(false);
+    setSelectedMaterial('');
   };
 
   const hideViewDialog = () => {
