@@ -15,7 +15,7 @@ const ProfileDropdown = () => {
   };
 
   const imageUrl = `https://api.dicebear.com/5.x/fun-emoji/svg?seed=${
-    UserSession.getUser().firebaseUid
+    UserSession.getUser().firebase_uid
   }.svg`;
 
   const namePlusIcon = () => {
