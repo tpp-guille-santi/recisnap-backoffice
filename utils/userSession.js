@@ -18,19 +18,19 @@ const UserSession = (function () {
 
   const getUserName = () => {
     const user = getUser();
-    const name = user.name ?? null;
+    const name = user?.name ?? null;
     return name;
   };
 
   const getUserFirebaseUid = () => {
     const user = getUser();
-    const firebase_uid = user.firebase_uid ?? null;
+    const firebase_uid = user?.firebase_uid ?? null;
     return firebase_uid;
   };
 
   const getUserPermissions = () => {
     const user = getUser();
-    const permissions = user.permissions ?? [];
+    const permissions = user?.permissions ?? [];
     return permissions;
   };
 
@@ -95,7 +95,7 @@ const UserSession = (function () {
 
   const isLoggedIn = () => {
     const user = getUser();
-    const firebase_uid = user.firebase_uid ?? false;
+    const firebase_uid = user?.firebase_uid ?? false;
     return !!firebase_uid;
   };
 
