@@ -658,7 +658,7 @@ export default function Home() {
         onHide={hideViewDialog}
       >
         <MDEditor
-        className='mt-1'
+          className="mt-1"
           data-color-mode="light"
           height={600}
           value={markdown}
