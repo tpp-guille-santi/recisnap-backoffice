@@ -38,7 +38,7 @@ const UsersPage = () => {
   };
 
   async function getUsers() {
-    return getUserList();
+    return await getUserList();
   }
 
   const permissionsColumnBody = rowData => {

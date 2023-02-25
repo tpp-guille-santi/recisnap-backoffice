@@ -43,6 +43,24 @@ const updateUserPermissions = async (userId, permissions) => {
   }
 };
 
+const deleteUserById = async firebaseId => {
+  await axios.delete(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}`
+  );
+};
+
+const getInstructions = async () => {
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions`
+    );
+    return response.data;
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+};
+
 const createInstruction = async instruction => {
   try {
     const body = {
@@ -75,10 +93,81 @@ const updateInstruction = async (instructionId, body) => {
   }
 };
 
-const deleteUserById = async firebaseId => {
-  await axios.delete(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}`
-  );
+const deleteInstruction = async instruciton => {
+  try {
+    await axios.delete(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruciton.id}`
+    );
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+};
+
+const deleteInstructions = async instrucitons => {
+  const success = await instrucitons.every(deleteInstruction);
+  return success;
+};
+
+const uploadInstructionsMarkdown = async (instruction, markdown) => {
+  try {
+    const blob = new Blob([markdown], { type: 'text/plain' });
+    const form = new FormData();
+    form.append('file', blob, `${instruction.id}.md`);
+    const headers = {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data'
+      }
+    };
+    await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruction.id}/markdown`,
+      form,
+      headers
+    );
+    downloadInstructionsMarkdown(instruction);
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+};
+
+const downloadInstructionsMarkdown = async instruction => {
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruction.id}/markdown`
+    );
+    return response.data;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+const downloadTemplateMarkdown = async () => {
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/markdown/template`
+    );
+    return response.data;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+const getMaterials = async () => {
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/materials`
+    );
+    return response.data;
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
 };
 
 export {
@@ -87,6 +176,13 @@ export {
   getUserById,
   updateUserPermissions,
   deleteUserById,
+  getInstructions,
   createInstruction,
-  updateInstruction
+  updateInstruction,
+  deleteInstruction,
+  deleteInstructions,
+  uploadInstructionsMarkdown,
+  downloadInstructionsMarkdown,
+  downloadTemplateMarkdown,
+  getMaterials
 };

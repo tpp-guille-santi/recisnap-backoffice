@@ -13,19 +13,23 @@ import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import axios from 'axios';
 import MDEditor from '@uiw/react-md-editor';
 import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
-import { app } from '../firebase-config';
 import PrivateRoute from '../../components/privateRoute';
-import { getStorage, getBytes, ref, uploadString } from 'firebase/storage';
 import Navbar from '../../components/navbar';
 import UserSession from '../../utils/userSession';
 import { InputSwitch } from 'primereact/inputswitch';
 import {
   createInstruction,
-  updateInstruction
+  deleteInstruction,
+  deleteInstructions,
+  downloadInstructionsMarkdown,
+  downloadTemplateMarkdown,
+  getInstructions,
+  getMaterials,
+  updateInstruction,
+  uploadInstructionsMarkdown
 } from '../../utils/serverConnector';
 const CustomMap = lazy(() => import('../../components/location/map'));
 
@@ -64,98 +68,24 @@ export default function Home() {
   const [map, setMap] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [markdown, setMarkdown] = useState('');
-  const [templateMarkdown, setTemplateMarkdown] = useState('');
+  const [templateMarkdown, setTemplateMarkdown] = useState();
   const [selectedMaterial, setSelectedMaterial] = useState('');
   const toast = useRef(null);
   const dt = useRef(null);
 
-  const getMarkdown = async file => {
-    const storageRef = ref(storage, file);
-    const bytes = await getBytes(storageRef);
-    return new TextDecoder().decode(bytes);
-  };
-
-  const getTemplateMarkdown = async () => {
-    try {
-      return getMarkdown(`/markdowns/template.md`);
-    } catch (e) {
-      return '';
-    }
-  };
-
-  const storage = getStorage(app);
-
-  const uploadInstructionsMarkdown = async instruction => {
-    try {
-      const storageRef = ref(storage, `/markdowns/${instruction.id}.md`);
-      await uploadString(storageRef, markdown);
-      return true;
-    } catch (e) {
-      console.log(e);
-      return false;
-    }
-  };
-
   const setMarkdownFromInstructions = async instruction => {
-    let markdown = templateMarkdown;
-    try {
-      const potentialMarkdown = await getMarkdown(
-        `/markdowns/${instruction.id}.md`
-      );
-      if (potentialMarkdown != null && potentialMarkdown.trim() !== '') {
-        markdown = potentialMarkdown;
-      }
-    } catch (e) {
-      console.log(e);
+    const potentialMarkdown = await downloadInstructionsMarkdown(instruction);
+    if (potentialMarkdown != null && potentialMarkdown.trim() !== '') {
+      setMarkdown(potentialMarkdown);
+    } else {
+      setMarkdown(templateMarkdown);
     }
-    setMarkdown(markdown);
   };
-
-  async function getInstructions() {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions`
-      );
-      return response.data;
-    } catch (e) {
-      console.log(e);
-      return [];
-    }
-  }
-
-  async function getMaterials() {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/materials`
-      );
-      return response.data;
-    } catch (e) {
-      console.log(e);
-      return [];
-    }
-  }
-
-  async function deleteInstruction(instruciton) {
-    try {
-      const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruciton.id}`
-      );
-      return true;
-    } catch (e) {
-      console.log(e);
-      return false;
-    }
-  }
-
-  async function deleteInstructions(instrucitons) {
-    const success = await instrucitons.every(deleteInstruction);
-    return success;
-  }
 
   useEffect(() => {
     getInstructions().then(data => setProducts(data));
     getMaterials().then(data => setMaterials(data));
-    getTemplateMarkdown().then(data => setTemplateMarkdown(data));
+    downloadTemplateMarkdown().then(data => setTemplateMarkdown(data));
   }, []);
 
   const openNew = () => {
@@ -192,17 +122,17 @@ export default function Home() {
     const instruction = await createInstruction(currentInstruction);
     if (instruction === null) {
       toast.current.show({
-        severity: 'Error',
+        severity: 'error',
         summary: 'Error',
         detail: 'Error al crear la instrucción',
         life: 3000
       });
       return;
     }
-    const uploaded = uploadInstructionsMarkdown(instruction);
+    const uploaded = await uploadInstructionsMarkdown(instruction, markdown);
     if (!uploaded) {
       toast.current.show({
-        severity: 'Error',
+        severity: 'error',
         summary: 'Error',
         detail: 'Error al crear la instrucción',
         life: 3000
@@ -229,17 +159,20 @@ export default function Home() {
     });
     if (!success) {
       toast.current.show({
-        severity: 'Error',
+        severity: 'error',
         summary: 'Error',
         detail: 'Error al actualizar la instrucción',
         life: 3000
       });
       return;
     }
-    const uploaded = uploadInstructionsMarkdown(currentInstruction);
+    const uploaded = await uploadInstructionsMarkdown(
+      currentInstruction,
+      markdown
+    );
     if (!uploaded) {
       toast.current.show({
-        severity: 'Error',
+        severity: 'error',
         summary: 'Error',
         detail: 'Error al actualizar la instrucción',
         life: 3000
@@ -275,15 +208,15 @@ export default function Home() {
     setViewLocationDialog(true);
   };
 
-  const viewProduct = instruction => {
+  const viewProduct = async instruction => {
     setCurrentInstruction({ ...instruction });
-    setMarkdownFromInstructions(instruction);
+    await setMarkdownFromInstructions(instruction);
     setViewProductDialog(true);
   };
 
-  const editProduct = instruction => {
+  const editProduct = async instruction => {
     setCurrentInstruction({ ...instruction });
-    setMarkdownFromInstructions(instruction);
+    await setMarkdownFromInstructions(instruction);
     setCreateStep1(false);
     setProductDialog(true);
     setPreloaded(true);
@@ -292,13 +225,13 @@ export default function Home() {
     );
   };
 
-  const confirmDeleteProduct = product => {
-    setCurrentInstruction(product);
+  const confirmDeleteProduct = instruction => {
+    setCurrentInstruction(instruction);
     setDeleteProductDialog(true);
   };
 
   const deleteProduct = async () => {
-    const success = await deleteInstruction(currentProduct);
+    const success = await deleteInstruction(currentInstruction);
     if (!success) {
       toast.current.show({
         severity: 'error',
@@ -308,7 +241,7 @@ export default function Home() {
       });
       return;
     }
-    let _products = products.filter(val => val.id !== currentProduct.id);
+    let _products = products.filter(val => val.id !== currentInstruction.id);
     setProducts(_products);
     setDeleteProductDialog(false);
     setCurrentInstruction(currentInstruction);
