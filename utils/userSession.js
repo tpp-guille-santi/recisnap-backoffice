@@ -35,6 +35,12 @@ const UserSession = (function () {
     return permissions;
   };
 
+  const getUserEmail = () => {
+    const user = getUser();
+    const email = user?.email ?? null;
+    return email;
+  };
+
   const canViewUsers = () => {
     const permissions = getUserPermissions();
     return permissions.includes('view_users');
@@ -103,6 +109,7 @@ const UserSession = (function () {
     getUser: getUser,
     getUserName: getUserName,
     getUserFirebaseUid: getUserFirebaseUid,
+    getUserEmail: getUserEmail,
     isLoggedIn: isLoggedIn,
     logout: logout,
     canEditPermissions: canEditPermissions,

@@ -51,7 +51,7 @@ const ProfileDropdown = () => {
             {UserSession.getUserName()}
           </h4>
           <h4 className="flex align-items-center justify-content-center m-2">
-            {UserSession.getUser().email}
+            {UserSession.getUserEmail()}
           </h4>
           <Button
             className="flex align-items-center justify-content-center p-button-danger p-button-outlined m-2 mt-4"
