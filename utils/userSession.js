@@ -3,125 +3,123 @@ import { app } from '../app/firebase-config';
 import { getAuth, signOut } from 'firebase/auth';
 import { setCookie, getCookie, deleteCookie } from 'cookies-next';
 
-const UserSession = (function () {
-  const setUser = userInformation => {
-    const user = userInformation.data;
-    setCookie('user', user);
-  };
+import { useEffect } from 'react';
 
-  const getUser = () => {
-    const user = getCookie('user');
-    if (!user) {
-      return null;
-    }
-    return JSON.parse(user);
-  };
+const setUser = userInformation => {
+  const user = userInformation.data;
+  setCookie('user', user);
+};
 
-  const getUserName = () => {
-    const user = getUser();
-    const name = user?.name ?? null;
-    return name;
-  };
+const getUser = () => {
+  const user = getCookie('user');
+  if (!user) {
+    return null;
+  }
+  return JSON.parse(user);
+};
 
-  const getUserFirebaseUid = () => {
-    const user = getUser();
-    const firebase_uid = user?.firebase_uid ?? null;
-    return firebase_uid;
-  };
+const getUserName = () => {
+  const user = getUser();
+  const name = user?.name ?? null;
+  return name;
+};
 
-  const getUserPermissions = () => {
-    const user = getUser();
-    const permissions = user?.permissions ?? [];
-    return permissions;
-  };
+const getUserFirebaseUid = () => {
+  const user = getUser();
+  const firebase_uid = user?.firebase_uid ?? null;
+  return firebase_uid;
+};
 
-  const getUserEmail = () => {
-    const user = getUser();
-    const email = user?.email ?? null;
-    return email;
-  };
+const getUserPermissions = () => {
+  const user = getUser();
+  const permissions = user?.permissions ?? [];
+  return permissions;
+};
 
-  const canViewUsers = () => {
-    const permissions = getUserPermissions();
-    return permissions.includes('view_users');
-  };
+const getUserEmail = () => {
+  const user = getUser();
+  const email = user?.email ?? null;
+  return email;
+};
 
-  const canEditPermissions = () => {
-    const permissions = getUserPermissions();
-    return permissions.includes('edit_user_permissions');
-  };
+const canViewUsers = () => {
+  const permissions = getUserPermissions();
+  return permissions.includes('view_users');
+};
 
-  const canDeleteUsers = () => {
-    const permissions = getUserPermissions();
-    return permissions.includes('delete_users');
-  };
+const canEditPermissions = () => {
+  const permissions = getUserPermissions();
+  return permissions.includes('edit_user_permissions');
+};
 
-  const canViewUserActions = () => {
-    const permissions = getUserPermissions();
-    return permissions.some(r =>
-      ['edit_user_permissions', 'delete_users'].includes(r)
-    );
-  };
+const canDeleteUsers = () => {
+  const permissions = getUserPermissions();
+  return permissions.includes('delete_users');
+};
 
-  const canDeleteInstructions = () => {
-    const permissions = getUserPermissions();
-    return permissions.includes('delete_instructions');
-  };
+const canViewUserActions = () => {
+  const permissions = getUserPermissions();
+  return permissions.some(r =>
+    ['edit_user_permissions', 'delete_users'].includes(r)
+  );
+};
 
-  const canCreateInstructions = () => {
-    const permissions = getUserPermissions();
-    return permissions.includes('create_instructions');
-  };
+const canDeleteInstructions = () => {
+  const permissions = getUserPermissions();
+  return permissions.includes('delete_instructions');
+};
 
-  const canEditInstructions = () => {
-    const permissions = getUserPermissions();
-    return permissions.includes('edit_instructions');
-  };
+const canCreateInstructions = () => {
+  const permissions = getUserPermissions();
+  return permissions.includes('create_instructions');
+};
 
-  const canBlockInstructions = () => {
-    const permissions = getUserPermissions();
-    return permissions.includes('block_instructions');
-  };
+const canEditInstructions = () => {
+  const permissions = getUserPermissions();
+  return permissions.includes('edit_instructions');
+};
 
-  const canViewInstructions = () => {
-    const permissions = getUserPermissions();
-    return permissions.includes('view_instructions');
-  };
+const canBlockInstructions = () => {
+  const permissions = getUserPermissions();
+  return permissions.includes('block_instructions');
+};
 
-  const logout = async () => {
-    try {
-      deleteCookie('user');
-      const auth = getAuth(app);
-      signOut(auth);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+const canViewInstructions = () => {
+  const permissions = getUserPermissions();
+  return permissions.includes('view_instructions');
+};
 
-  const isLoggedIn = () => {
-    const user = getUser();
-    const firebase_uid = user?.firebase_uid ?? false;
-    return !!firebase_uid;
-  };
+const logout = async () => {
+  try {
+    deleteCookie('user');
+    const auth = getAuth(app);
+    signOut(auth);
+  } catch (e) {
+    console.log(e);
+  }
+};
 
-  return {
-    setUser: setUser,
-    getUser: getUser,
-    getUserName: getUserName,
-    getUserFirebaseUid: getUserFirebaseUid,
-    getUserEmail: getUserEmail,
-    isLoggedIn: isLoggedIn,
-    logout: logout,
-    canEditPermissions: canEditPermissions,
-    canDeleteUsers: canDeleteUsers,
-    canViewUserActions: canViewUserActions,
-    canViewUsers: canViewUsers,
-    canDeleteInstructions: canDeleteInstructions,
-    canCreateInstructions: canCreateInstructions,
-    canEditInstructions: canEditInstructions,
-    canBlockInstructions: canBlockInstructions,
-    canViewInstructions: canViewInstructions
-  };
-})();
+const isLoggedIn = () => {
+  const user = getUser();
+  const firebase_uid = user?.firebase_uid ?? false;
+  return !!firebase_uid;
+};
 
-export default UserSession;
+export {
+  setUser,
+  getUser,
+  getUserName,
+  getUserFirebaseUid,
+  getUserEmail,
+  isLoggedIn,
+  logout,
+  canEditPermissions,
+  canDeleteUsers,
+  canViewUserActions,
+  canViewUsers,
+  canDeleteInstructions,
+  canCreateInstructions,
+  canEditInstructions,
+  canBlockInstructions,
+  canViewInstructions
+};

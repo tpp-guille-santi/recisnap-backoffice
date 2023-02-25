@@ -3,8 +3,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import logo from '../public/logo.png';
 import ProfileDropdown from '../components/profileDropdown';
-import UserSession from '../utils/userSession';
 import { usePathname } from 'next/navigation';
+import { canViewUsers } from '../utils/userSession';
 
 const isologo = () => {
   return (
@@ -36,7 +36,7 @@ const Navbar = () => {
         >
           Instrucciones
         </Link>
-        {UserSession.canViewUsers() && (
+        {canViewUsers() && (
           <div>
             <i className="pi pi-users ml-4"></i>
             <Link

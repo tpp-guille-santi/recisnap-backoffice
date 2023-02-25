@@ -20,8 +20,8 @@ import Image from 'next/image';
 import logo from '../../public/logo.png';
 import Link from 'next/link';
 import { emailValidator, passwordValidator } from '../../utils/validators';
-import UserSession from '../../utils/userSession';
 import Spinner from '../../components/spinner';
+import { canViewInstructions, setUser } from '../../utils/userSession';
 
 function HookForm() {
   const defaultValues = {
@@ -64,7 +64,7 @@ function HookForm() {
       const auth = getAuth(app);
       const googleProvider = new GoogleAuthProvider();
       const credentials = await signInWithPopup(auth, googleProvider);
-      const isNewUser = await getAdditionalUserInfo(credentials).isNewUser;
+      const isNewUser = getAdditionalUserInfo(credentials).isNewUser;
       if (isNewUser) {
         await saveNewUser({
           firebase_uid: credentials.user.uid,
@@ -73,8 +73,8 @@ function HookForm() {
         });
       }
       const userInformation = await getUserById(credentials.user.uid);
-      UserSession.setUser(userInformation);
-      if (!UserSession.canViewInstructions()) {
+      setUser(userInformation);
+      if (!canViewInstructions()) {
         toast.current.show({
           severity: 'error',
           summary: 'Error',
@@ -107,8 +107,8 @@ function HookForm() {
       );
       const user = userCredential.user;
       const userInformation = await getUserById(user.uid);
-      UserSession.setUser(userInformation);
-      if (!UserSession.canViewInstructions()) {
+      setUser(userInformation);
+      if (!canViewInstructions()) {
         toast.current.show({
           severity: 'error',
           summary: 'Error',
@@ -210,20 +210,19 @@ function HookForm() {
               <div className="mb-5">
                 <hr></hr>
               </div>
-
-              <div className="mb-5">
-                <Button
-                  className="p-2 bg-white text-color"
-                  icon="pi pi-google"
-                  label="Continuar con Google"
-                  onClick={signInWithGoogle}
-                />
-              </div>
-              <div className="mb-5">
-                No tenes cuenta?{' '}
-                <Link href="/register">Hace click aquí para registrarte</Link>
-              </div>
             </form>
+            <div className="mb-5">
+              <Button
+                className="p-2 bg-white text-color  w-full"
+                icon="pi pi-google"
+                label="Continuar con Google"
+                onClick={signInWithGoogle}
+              />
+            </div>
+            <div className="mb-5">
+              No tenes cuenta?{' '}
+              <Link href="/register">Hace click aquí para registrarte</Link>
+            </div>
           </div>
         </div>
       </div>

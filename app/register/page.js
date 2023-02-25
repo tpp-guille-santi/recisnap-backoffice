@@ -19,8 +19,8 @@ import {
   passwordValidator,
   confirmPasswordValidator
 } from '../../utils/validators';
-import UserSession from '../../utils/userSession';
 import Spinner from '../../components/spinner';
+import { setUser } from '../../utils/userSession';
 
 function HookForm() {
   const defaultValues = {
@@ -71,7 +71,7 @@ function HookForm() {
         life: 3000
       });
       const userInformation = await getUserById(user.uid);
-      UserSession.setUser(userInformation);
+      setUser(userInformation);
       router.push('/instructions');
     } catch (edit) {
       console.log(e);

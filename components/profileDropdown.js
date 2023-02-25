@@ -1,20 +1,25 @@
 'use client';
 import { useRef } from 'react';
-import UserSession from '../utils/userSession';
 import { useRouter } from 'next/navigation';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import Image from 'next/image';
 import { Button } from 'primereact/button';
+import {
+  getUserEmail,
+  getUserFirebaseUid,
+  getUserName,
+  logout
+} from '../utils/userSession';
 
 const ProfileDropdown = () => {
   const router = useRouter();
 
   const signOut = async () => {
-    UserSession.logout();
+    logout();
     router.push('/login');
   };
 
-  const imageUrl = `https://api.dicebear.com/5.x/fun-emoji/svg?seed=${UserSession.getUserFirebaseUid()}.svg`;
+  const imageUrl = `https://api.dicebear.com/5.x/fun-emoji/svg?seed=${getUserFirebaseUid()}.svg`;
 
   const namePlusIcon = () => {
     return (
@@ -23,7 +28,7 @@ const ProfileDropdown = () => {
           <Image src={imageUrl} alt="Profile Picture" width={30} height={30} />
         </div>
         <h4 className="flex align-items-center justify-content-center text-color">
-          {UserSession.getUserName()}
+          {getUserName()}
         </h4>
       </div>
     );
@@ -48,10 +53,10 @@ const ProfileDropdown = () => {
             />
           </div>
           <h4 className="flex align-items-center justify-content-center m-2">
-            {UserSession.getUserName()}
+            {getUserName()}
           </h4>
           <h4 className="flex align-items-center justify-content-center m-2">
-            {UserSession.getUserEmail()}
+            {getUserEmail()}
           </h4>
           <Button
             className="flex align-items-center justify-content-center p-button-danger p-button-outlined m-2 mt-4"
