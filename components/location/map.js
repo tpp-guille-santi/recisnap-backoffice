@@ -7,7 +7,9 @@ const CustomMap = props => {
 
   const onClick = useCallback(
     e => {
-      props.setMarkerPosition(e.latlng);
+      if (!!props.setMarkerPosition) {
+        props.setMarkerPosition(e.latlng);
+      }
     },
     [props.map]
   );
