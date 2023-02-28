@@ -18,7 +18,6 @@ import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 import PrivateRoute from '../../components/privateRoute';
 import Navbar from '../../components/navbar';
-import UserSession from '../../utils/userSession';
 import { InputSwitch } from 'primereact/inputswitch';
 import {
   createInstruction,
@@ -31,6 +30,12 @@ import {
   updateInstruction,
   uploadInstructionsMarkdown
 } from '../../utils/serverConnector';
+import {
+  canBlockInstructions,
+  canCreateInstructions,
+  canDeleteInstructions,
+  canEditInstructions
+} from '../../utils/userSession';
 const CustomMap = lazy(() => import('../../components/location/map'));
 
 export default function Home() {
@@ -297,8 +302,8 @@ export default function Home() {
           tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
           onClick={() => viewLocation(rowData)}
         />
-        {(UserSession.canBlockInstructions() ||
-          (UserSession.canEditInstructions() && rowData.editable)) && (
+        {(canBlockInstructions() ||
+          (canEditInstructions() && rowData.editable)) && (
           <Button
             icon="pi pi-pencil"
             className="p-button-rounded p-button-success m-1"
@@ -307,7 +312,7 @@ export default function Home() {
             onClick={() => editProduct(rowData)}
           />
         )}
-        {UserSession.canDeleteInstructions() && (
+        {canDeleteInstructions() && (
           <Button
             icon="pi pi-trash"
             className="p-button-rounded p-button-danger m-1"
@@ -332,7 +337,7 @@ export default function Home() {
         />
       </span>
       <div className="mt-3 md:mt-0 flex justify-content-end mr-8">
-        {UserSession.canCreateInstructions() && (
+        {canCreateInstructions() && (
           <Button
             icon="pi pi-plus"
             className="mr-2 p-button-rounded"
@@ -341,7 +346,7 @@ export default function Home() {
             tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
           />
         )}
-        {UserSession.canDeleteInstructions() && (
+        {canDeleteInstructions() && (
           <Button
             icon="pi pi-trash"
             className="p-button-danger mr-2 p-button-rounded"

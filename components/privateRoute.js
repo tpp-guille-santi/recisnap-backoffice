@@ -1,10 +1,9 @@
 'use client';
-import UserSession from '../utils/userSession';
 import { redirect } from 'next/navigation';
+import { isLoggedIn } from '../utils/userSession';
 
 const PrivateRoute = ({ children }) => {
-  const isLoggedIn = UserSession.isLoggedIn();
-  if (!isLoggedIn) {
+  if (!isLoggedIn()) {
     redirect('/login');
   }
   return <section>{children}</section>;

@@ -7,7 +7,6 @@ import { deleteUserById } from '../../utils/serverConnector';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import PermissionIcon from '../../components/permissionIcon.js';
-import UserSession from '../../utils/userSession';
 import EditPermissionsDialog from '../../components/permissions/editPermissionsDialog.js';
 import { Dialog } from 'primereact/dialog';
 import PrivateRoute from '../../components/privateRoute';
@@ -15,6 +14,13 @@ import Navbar from '../../components/navbar';
 import all_permissions from '../../config/permissions.json';
 import { Toast } from 'primereact/toast';
 import { useRouter } from 'next/navigation';
+import {
+  canDeleteUsers,
+  canEditPermissions,
+  canViewUserActions,
+  getUserFirebaseUid,
+  logout
+} from '../../utils/userSession';
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -33,7 +39,7 @@ const UsersPage = () => {
 
   const router = useRouter();
   const signOut = async () => {
-    await UserSession.logout();
+    await logout();
     router.push('/login');
   };
 
@@ -61,7 +67,7 @@ const UsersPage = () => {
   };
 
   const savePermissionsDialog = async (firebase_uid, permissions) => {
-    if (firebase_uid == UserSession.getUserFirebaseUid()) {
+    if (firebase_uid == getUserFirebaseUid()) {
       await signOut();
     }
     const user = users.find(user => user.firebase_uid === firebase_uid);
@@ -77,7 +83,7 @@ const UsersPage = () => {
   const actionsBody = rowData => {
     return (
       <div>
-        {UserSession.canEditPermissions() && (
+        {canEditPermissions() && (
           <Button
             className="p-button-rounded m-1"
             icon="pi pi-pencil"
@@ -90,7 +96,7 @@ const UsersPage = () => {
             }}
           />
         )}
-        {UserSession.canDeleteUsers() && (
+        {canDeleteUsers() && (
           <Button
             className="p-button-rounded p-button-danger m-1"
             icon="pi pi-trash"
@@ -218,7 +224,7 @@ const UsersPage = () => {
             sortable
             body={permissionsColumnBody}
           ></Column>
-          {UserSession.canViewUserActions() && (
+          {canViewUserActions() && (
             <Column
               header="Acciones"
               exportable={false}
