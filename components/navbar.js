@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import logo from '../public/logo.png';
+import logo from '../public/logo.svg';
 import ProfileDropdown from '../components/profileDropdown';
 import { usePathname } from 'next/navigation';
 import { canViewUsers } from '../utils/userSession';

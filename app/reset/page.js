@@ -9,7 +9,7 @@ import { app } from '../firebase-config';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import logo from '../../public/logo.png';
+import logo from '../../public/logo.svg';
 import Link from 'next/link';
 import { emailValidator } from '../../utils/validators';
 import Spinner from '../../components/spinner';
