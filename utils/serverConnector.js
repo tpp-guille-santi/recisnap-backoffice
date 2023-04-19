@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const saveNewUser = async body => {
   const response = await axios
-    .post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, body)
+    .post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/`, body)
     .then(response => {
       return response.code == 201;
     })
@@ -15,7 +15,7 @@ const saveNewUser = async body => {
 const getUserList = async () => {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/`
     );
     return response.data;
   } catch (e) {
@@ -26,14 +26,14 @@ const getUserList = async () => {
 
 const getUserById = async firebaseId => {
   return await axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}`
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}/`
   );
 };
 
 const updateUserPermissions = async (userId, permissions) => {
   try {
     await axios.patch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}/`,
       { permissions: permissions }
     );
     return true;
@@ -45,14 +45,14 @@ const updateUserPermissions = async (userId, permissions) => {
 
 const deleteUserById = async firebaseId => {
   await axios.delete(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}`
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}/`
   );
 };
 
 const getInstructions = async () => {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/`
     );
     return response.data;
   } catch (e) {
@@ -70,7 +70,7 @@ const createInstruction = async instruction => {
       lon: instruction.lon
     };
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/`,
       body
     );
     return response.data;
@@ -83,7 +83,7 @@ const createInstruction = async instruction => {
 const updateInstruction = async (instructionId, body) => {
   try {
     await axios.patch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instructionId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instructionId}/`,
       body
     );
     return true;
@@ -96,7 +96,7 @@ const updateInstruction = async (instructionId, body) => {
 const deleteInstruction = async instruciton => {
   try {
     await axios.delete(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruciton.id}`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruciton.id}/`
     );
     return true;
   } catch (e) {
@@ -122,7 +122,7 @@ const uploadInstructionsMarkdown = async (instruction, markdown) => {
       }
     };
     await axios.post(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruction.id}/markdown`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruction.id}/markdown/`,
       form,
       headers
     );
@@ -137,7 +137,7 @@ const uploadInstructionsMarkdown = async (instruction, markdown) => {
 const downloadInstructionsMarkdown = async instruction => {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruction.id}/markdown`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruction.id}/markdown/`
     );
     return response.data;
   } catch (e) {
@@ -149,7 +149,7 @@ const downloadInstructionsMarkdown = async instruction => {
 const downloadTemplateMarkdown = async () => {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/markdown/template`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/markdown/template/`
     );
     return response.data;
   } catch (e) {
@@ -161,7 +161,7 @@ const downloadTemplateMarkdown = async () => {
 const getMaterials = async () => {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/materials`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/materials/`
     );
     return response.data;
   } catch (e) {
