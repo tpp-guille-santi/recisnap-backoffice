@@ -30,7 +30,6 @@ a {
 input,
 textarea {
   display: block;
-  max-width: 300px;
   margin: 0.5rem 0;
 }
 
