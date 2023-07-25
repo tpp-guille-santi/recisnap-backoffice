@@ -564,24 +564,28 @@ export default function Home() {
             className="capitalize"
             field="provincia"
             header="Provincia"
+            filter
             sortable
           ></Column>
           <Column
             className="capitalize"
             field="departamento"
             header="Departamento"
+            filter
             sortable
           ></Column>
           <Column
             className="capitalize"
             field="municipio"
             header="Municipio"
+            filter
             sortable
           ></Column>
           <Column
             className="capitalize"
             field="material_name"
             header="Material"
+            filter
             sortable
           ></Column>
           <Column body={actionBodyTemplate} exportable={false}></Column>
