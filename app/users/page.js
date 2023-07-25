@@ -217,8 +217,8 @@ const UsersPage = () => {
           header={header}
           responsiveLayout="scroll"
         >
-          <Column field="email" header="Email" sortable></Column>
-          <Column field="name" header="Nombre" sortable></Column>
+          <Column field="email" header="Email" filter sortable></Column>
+          <Column field="name" header="Nombre" filter sortable></Column>
           <Column
             header="Permisos"
             sortable
