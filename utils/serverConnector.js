@@ -161,7 +161,7 @@ const downloadTemplateMarkdown = async () => {
 const getMaterials = async () => {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/materials/`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/materials/?enabled=true`
     );
     return response.data;
   } catch (e) {
