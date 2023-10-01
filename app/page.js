@@ -1,20 +1,67 @@
 'use client';
 import RouterButton from '../components/routerButton';
-import React from 'react';
+import Head from 'next/head';
+import Script from 'next/script';
+import Link from 'next/link';
 import { Card } from 'primereact/card';
+import React, { useState, useEffect } from 'react';
+import 'leaflet/dist/leaflet.css';
+import CustomMap from '../components/location/map';
+import {
+  createInstruction,
+  deleteInstruction,
+  deleteInstructions,
+  downloadInstructionsMarkdown,
+  downloadTemplateMarkdown,
+  getInstructions,
+  getMaterials,
+  updateInstruction,
+  uploadInstructionsMarkdown
+} from '../utils/serverConnector';
+import MDEditor from '@uiw/react-md-editor';
+import { Dialog } from 'primereact/dialog';
+import PublicNavbar from '../components/publicNavbar';
+
+const DEFAULT_MAP_CENTER = [-34.591371, -58.42398];
 
 const Home = () => {
+  const [map, setMap] = useState(null);
+  const [instructions, setInstructions] = useState(null);
+  const [viewProductDialog, setViewProductDialog] = useState(false);
+  const [markdown, setMarkdown] = useState('');
+  const [currentInstruction, setCurrentInstruction] = useState('');
+  useEffect(() => {
+    getInstructions().then(instructions => setInstructions(instructions));
+  }, [instructions]);
+
+  const viewProduct = async instruction => {
+    setCurrentInstruction(instruction);
+    const potentialMarkdown = await downloadInstructionsMarkdown(instruction);
+    if (potentialMarkdown != null && potentialMarkdown.trim() !== '') {
+      setMarkdown(potentialMarkdown);
+    } else {
+      setMarkdown(templateMarkdown);
+    }
+    setViewProductDialog(true);
+  };
+
   return (
     <div className="text-center min-h-screen flex flex-col items-center justify-center">
-      <main className="m-4">
-        <div className="flex flex-row items-center justify-content-end mb-6">
-          <RouterButton route={'/login'} label={'Ingresar'}></RouterButton>
-          <RouterButton
-            primary={true}
-            route={'/register'}
-            label={'Registrarme'}
-          ></RouterButton>
-        </div>
+      <Head>
+        <Link
+          rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossOrigin=""
+        />
+      </Head>
+      <Script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossOrigin=""
+      />
+      <main className="m-4 w-screen">
+        <PublicNavbar showButtons={true}></PublicNavbar>
         <h1 className="mb-3 font-bold text-3xl">
           <span className="text-900">Bienvenido a Recisnap!</span>
         </h1>
@@ -22,55 +69,35 @@ const Home = () => {
           ¡Gracias por ser parte de la comunidad de Recisnap y contribuir a un
           futuro más sostenible para nuestro planeta!
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="shadow-lg rounded-lg p-4">
-            <h2 className="text-2xl font-semibold">¿Cómo puedes contribuir?</h2>
-            <p>
-              En Recisnap, tenés la oportunidad de hacer una diferencia real en
-              la promoción del reciclaje y la conciencia ambiental. Aquí es
-              donde, como miembro activo de nuestra comunidad, podés aportar de
-              diversas maneras:
-            </p>
-            <div className="grid">
-              <div className="col">
-                <Card title="Agregando centros de reciclaje">
-                  Si conoces centros de reciclaje en tu área que aún no están en
-                  nuestra base de datos, te animamos a compartir esa
-                  información. De esta manera, podremos ofrecer una experiencia
-                  más completa y útil para todos los usuarios de la aplicación.
-                </Card>
-              </div>
-              <div className="col">
-                <Card title="Mejorando la información">
-                  Puedes escribir información sobre el reciclaje de diversos
-                  materiales en diferentes niveles geográficos. Si tenés
-                  conocimientos sobre el reciclaje de materiales específicos en
-                  tu provincia, departamento o municipio, ¡tu aporte será muy
-                  valioso para enriquecer el contenido de nuestra aplicación!
-                </Card>
-              </div>
-            </div>
-          </div>
-          <div>
-            <p>
-              La identificación de materiales se realiza directamente desde la
-              aplicación móvil de Recisnap. Nuestra aplicación utiliza un modelo
-              de clasificación basado en inteligencia artificial que te permite
-              tomar una foto de un objeto y obtener instrucciones claras sobre
-              cómo reciclarlo adecuadamente. Cada vez que los usuarios aportan
-              nuevas imágenes para la clasificación, el modelo se reentrena para
-              mejorar su precisión y eficacia.
-            </p>
-            <p>
-              ¡Tu participación es fundamental para hacer de Recisnap una
-              herramienta aún más poderosa y efectiva para el reciclaje!
-            </p>
-            <p>
-              Gracias por formar parte de este proyecto y contribuir al cuidado
-              de nuestro medio ambiente.
-            </p>
-          </div>
+        <div>
+          <CustomMap
+            center={DEFAULT_MAP_CENTER}
+            map={map}
+            setMap={setMap}
+            instructions={instructions}
+            style={{ height: '70vh' }}
+            onMarkerClick={viewProduct}
+          ></CustomMap>
         </div>
+        <Dialog
+          className="w-6"
+          header={`Material ${currentInstruction.material_name}`}
+          visible={viewProductDialog}
+          modal
+          onHide={setViewProductDialog}
+        >
+          <MDEditor
+            className="mt-1"
+            data-color-mode="light"
+            height={400}
+            width={1200}
+            value={markdown}
+            onChange={setMarkdown}
+            visibleDragbar={false}
+            hideToolbar={true}
+            preview={'preview'}
+          />
+        </Dialog>
       </main>
     </div>
   );

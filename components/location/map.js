@@ -2,53 +2,65 @@
 import { MapContainer, TileLayer } from 'react-leaflet';
 import LocationMarker from './locationMarker';
 import { useCallback, useEffect } from 'react';
-const CustomMap = props => {
-  const markers = props.markers ?? [];
 
+function CustomMap({
+  instructions,
+  setMarkerPosition,
+  map,
+  setMap,
+  center,
+  markerPosition,
+  style,
+  onMarkerClick
+}) {
   const onClick = useCallback(
     e => {
-      if (!!props.setMarkerPosition) {
-        props.setMarkerPosition(e.latlng);
+      if (!!setMarkerPosition) {
+        setMarkerPosition(e.latlng);
       }
     },
-    [props.map]
+    [map]
   );
 
   useEffect(() => {
-    if (!!props.map) {
-      props.map.on('click', onClick);
+    if (!!map) {
+      map.on('click', onClick);
       return () => {
-        props.map.off('click', onClick);
+        map.off('click', onClick);
       };
     }
-  }, [props.map, onClick]);
+  }, [map, onClick, instructions]);
 
   return (
     <MapContainer
-      center={props.center}
+      center={center}
       zoom={13}
       scrollWheelZoom={true}
-      style={{ height: '37rem' }}
-      ref={props.setMap}
+      style={style}
+      ref={setMap}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {!!props.markerPosition && (
-        <LocationMarker
-          markerPosition={props.markerPosition}
-          map={props.map}
-        ></LocationMarker>
-      )}
-      {markers.forEach(markerPosition => (
+      {!!markerPosition && (
         <LocationMarker
           markerPosition={markerPosition}
-          map={props.map}
+          map={map}
         ></LocationMarker>
-      ))}
+      )}
+      {!!instructions &&
+        instructions.map((instruction, index) => (
+          <LocationMarker
+            key={index}
+            markerPosition={[instruction.lat, instruction.lon]}
+            map={map}
+            onClick={onMarkerClick}
+            instruction={instruction}
+          />
+        ))}
     </MapContainer>
   );
-};
+}
 
 export default CustomMap;

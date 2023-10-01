@@ -1,5 +1,6 @@
 'use client';
 import { Marker } from 'react-leaflet';
+import { Popup } from 'react-leaflet';
 
 const svgIcon = L.divIcon({
   html: `
@@ -27,12 +28,21 @@ const svgIcon = L.divIcon({
   iconAnchor: [12, 40]
 });
 
-const LocationMarker = props => {
-  return props.markerPosition === null ? null : (
+const LocationMarker = ({ markerPosition, onClick, instruction }) => {
+  const clickedMarker = () => {
+    if (onClick && instruction) {
+      return onClick(instruction);
+    }
+  };
+
+  return markerPosition === null ? null : (
     <Marker
-      position={props.markerPosition}
+      position={markerPosition}
       icon={svgIcon}
       draggable={false}
+      eventHandlers={{
+        click: clickedMarker
+      }}
     ></Marker>
   );
 };
