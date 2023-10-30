@@ -442,6 +442,7 @@ export default function Home() {
               setMarkerPosition={setMarkerPosition}
               map={map}
               setMap={setMap}
+              style={{ height: '65vh' }}
             ></CustomMap>
           </div>
         )
@@ -529,14 +530,14 @@ export default function Home() {
       <Head>
         <Link
           rel="stylesheet"
-          href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-          integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossOrigin=""
         />
       </Head>
       <Script
-        src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossOrigin=""
       />
       <Navbar></Navbar>
@@ -595,6 +596,7 @@ export default function Home() {
 
       <Dialog
         className="w-6"
+        header={`Material ${currentInstruction.material_name}`}
         visible={viewProductDialog}
         modal
         onHide={hideViewDialog}
@@ -622,6 +624,7 @@ export default function Home() {
           markerPosition={[currentInstruction.lat, currentInstruction.lon]}
           map={map}
           setMap={setMap}
+          style={{ height: '65vh' }}
         ></CustomMap>
       </Dialog>
 
