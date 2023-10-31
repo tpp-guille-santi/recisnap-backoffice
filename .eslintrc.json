@@ -5,10 +5,13 @@
     "prettier"
   ],
   "plugins": [
-    "prettier"
+    "prettier", "unused-imports"
   ],
   "rules": {
     "prettier/prettier": "warn",
-    "no-console": "warn"
-  }
+    "no-console": "warn",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars":  "error"
+  },
+  "ignorePatterns": ["node_modules/"]
 }

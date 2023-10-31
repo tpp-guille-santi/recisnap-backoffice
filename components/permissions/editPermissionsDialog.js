@@ -44,12 +44,14 @@ const EditPermissionsDialog = props => {
       <Button
         label="Cancelar"
         icon="pi pi-times"
-        className="p-button-text"
+        className="mt-2"
+        severity="secondary"
         onClick={() => props.close()}
       />
       <Button
         label="Guardar"
         icon="pi pi-check"
+        className="mt-2"
         onClick={() => savePermissions()}
       />
     </div>
@@ -58,7 +60,7 @@ const EditPermissionsDialog = props => {
   return (
     <div>
       <Dialog
-        className="w-3"
+        className="w-6"
         visible={props.visibility}
         footer={dialogFooter}
         onHide={() => props.close()}

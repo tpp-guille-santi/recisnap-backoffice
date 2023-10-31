@@ -63,7 +63,7 @@ function HookForm() {
         name: data.name,
         email: data.email
       };
-      const exit = await saveNewUser(userInformationObject);
+      await saveNewUser(userInformationObject);
       toast.current.show({
         severity: 'success',
         summary: 'Éxito',
@@ -74,7 +74,6 @@ function HookForm() {
       setUser(userInformation);
       router.push('/instructions');
     } catch (edit) {
-      console.log(e);
       toast.current.show({
         severity: 'error',
         summary: 'Error',

@@ -1,7 +1,7 @@
 'use client';
+import { useCallback, useEffect } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import LocationMarker from './locationMarker';
-import { useCallback, useEffect } from 'react';
 
 function CustomMap({
   instructions,
@@ -19,7 +19,7 @@ function CustomMap({
         setMarkerPosition(e.latlng);
       }
     },
-    [map]
+    [setMarkerPosition]
   );
 
   useEffect(() => {
