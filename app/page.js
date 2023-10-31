@@ -1,30 +1,24 @@
 'use client';
-import RouterButton from '../components/routerButton';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Script from 'next/script';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { Card } from 'primereact/card';
-import React, { useState, useEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
-import CustomMap from '../components/location/map';
 import {
-  createInstruction,
-  deleteInstruction,
-  deleteInstructions,
   downloadInstructionsMarkdown,
-  downloadTemplateMarkdown,
-  getInstructions,
-  getMaterials,
-  updateInstruction,
-  uploadInstructionsMarkdown
+  getInstructions
 } from '../utils/serverConnector';
 import MDEditor from '@uiw/react-md-editor';
 import { Dialog } from 'primereact/dialog';
 import PublicNavbar from '../components/publicNavbar';
+const CustomMap = dynamic(() => import('../components/location/map'), {
+  ssr: false
+});
 
 const DEFAULT_MAP_CENTER = [-34.591371, -58.42398];
 
-const Home = () => {
+export default function Home() {
   const [map, setMap] = useState(null);
   const [instructions, setInstructions] = useState(null);
   const [viewProductDialog, setViewProductDialog] = useState(false);
@@ -101,6 +95,4 @@ const Home = () => {
       </main>
     </div>
   );
-};
-
-export default Home;
+}

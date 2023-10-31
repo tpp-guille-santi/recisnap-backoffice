@@ -1,9 +1,6 @@
-'use client';
 import { app } from '../app/firebase-config';
 import { getAuth, signOut } from 'firebase/auth';
 import { setCookie, getCookie, deleteCookie } from 'cookies-next';
-
-import { useEffect } from 'react';
 
 const setUser = userInformation => {
   const user = userInformation.data;

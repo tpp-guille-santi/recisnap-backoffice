@@ -1,4 +1,3 @@
-'use client';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
 const Spinner = () => {

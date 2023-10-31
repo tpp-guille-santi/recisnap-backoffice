@@ -1,12 +1,12 @@
 'use client';
+import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
-import { lazy } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Script from 'next/script';
 import 'leaflet/dist/leaflet.css';
 import { Steps } from 'primereact/steps';
 import { Dropdown } from 'primereact/dropdown';
-import React, { useState, useEffect, useRef } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Toast } from 'primereact/toast';
@@ -36,7 +36,9 @@ import {
   canDeleteInstructions,
   canEditInstructions
 } from '../../utils/userSession';
-const CustomMap = lazy(() => import('../../components/location/map'));
+const CustomMap = dynamic(() => import('../../components/location/map'), {
+  ssr: false
+});
 
 export default function Home() {
   let emptyInstruction = {
@@ -290,14 +292,18 @@ export default function Home() {
       <React.Fragment>
         <Button
           icon="pi pi-file"
-          className="p-button-rounded p-button-info m-1"
+          className="m-1"
+          severity="info"
+          rounded
           tooltip="Ver instrucciones"
           tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
           onClick={() => viewProduct(rowData)}
         />
         <Button
           icon="pi pi-map-marker"
-          className="p-button-rounded p-button-warning m-1"
+          className="m-1"
+          severity="warning"
+          rounded
           tooltip="Ver ubicación"
           tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
           onClick={() => viewLocation(rowData)}
@@ -306,7 +312,9 @@ export default function Home() {
           (canEditInstructions() && rowData.editable)) && (
           <Button
             icon="pi pi-pencil"
-            className="p-button-rounded p-button-success m-1"
+            className="m-1"
+            severity="success"
+            rounded
             tooltip="Editar instrucciones"
             tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
             onClick={() => editProduct(rowData)}
@@ -315,7 +323,9 @@ export default function Home() {
         {canDeleteInstructions() && (
           <Button
             icon="pi pi-trash"
-            className="p-button-rounded p-button-danger m-1"
+            className="m-1"
+            severity="danger"
+            rounded
             tooltip="Eliminar instrucciones"
             tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
             onClick={() => confirmDeleteProduct(rowData)}
@@ -340,7 +350,9 @@ export default function Home() {
         {canCreateInstructions() && (
           <Button
             icon="pi pi-plus"
-            className="mr-2 p-button-rounded"
+            className="mr-2"
+            severity="success"
+            rounded
             onClick={openNew}
             tooltip="Crear instrucciones"
             tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
@@ -349,7 +361,9 @@ export default function Home() {
         {canDeleteInstructions() && (
           <Button
             icon="pi pi-trash"
-            className="p-button-danger mr-2 p-button-rounded"
+            className="mr-2"
+            severity="danger"
+            rounded
             onClick={confirmDeleteSelected}
             disabled={!selectedProducts || !selectedProducts.length}
             tooltip="Eliminar selección"
@@ -364,7 +378,8 @@ export default function Home() {
       <Button
         label="Cancelar"
         icon="pi pi-times"
-        className="p-button-text mt-2"
+        className="mt-2"
+        severity="secondary"
         onClick={hideDialog}
       />
       {createStep1 ? (
@@ -400,15 +415,16 @@ export default function Home() {
   const deleteProductDialogFooter = (
     <React.Fragment>
       <Button
-        label="No"
+        label="Cancelar"
         icon="pi pi-times"
-        className="p-button-text  mt-2"
+        className="mt-2"
+        severity="secondary"
         onClick={hideDeleteProductDialog}
       />
       <Button
-        label="Si"
+        label="Eliminar"
         icon="pi pi-check"
-        className="p-button-text  mt-2"
+        className="mt-2"
         onClick={deleteProduct}
       />
     </React.Fragment>
@@ -417,15 +433,16 @@ export default function Home() {
   const deleteProductsDialogFooter = (
     <React.Fragment>
       <Button
-        label="No"
+        label="Cancelar"
         icon="pi pi-times"
-        className="p-button-text  mt-2"
+        className="mt-2"
+        severity="secondary"
         onClick={hideDeleteProductsDialog}
       />
       <Button
-        label="Si"
+        label="Eliminar"
         icon="pi pi-check"
-        className="p-button-text  mt-2"
+        className="mt-2"
         onClick={deleteSelectedProducts}
       />
     </React.Fragment>
@@ -629,7 +646,7 @@ export default function Home() {
       </Dialog>
 
       <Dialog
-        className="w-3"
+        className="w-6"
         visible={deleteProductDialog}
         header="Confirmar"
         modal
@@ -643,7 +660,7 @@ export default function Home() {
       </Dialog>
 
       <Dialog
-        className="w-3"
+        className="w-6"
         visible={deleteProductsDialog}
         header="Confirmar"
         modal

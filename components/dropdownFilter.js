@@ -35,7 +35,7 @@ const DropdownFilter = props => {
       setDepartmentList([_departamento]);
       setmunicipiosList([_municipio]);
     }
-  }, []);
+  }, [props]);
 
   const materialSelected = material => {
     setMaterial(material);

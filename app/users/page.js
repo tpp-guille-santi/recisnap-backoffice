@@ -85,7 +85,9 @@ const UsersPage = () => {
       <div>
         {canEditPermissions() && (
           <Button
-            className="p-button-rounded m-1"
+            className="m-1"
+            severity="success"
+            rounded
             icon="pi pi-pencil"
             tooltip="Editar permisos"
             tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
@@ -98,7 +100,9 @@ const UsersPage = () => {
         )}
         {canDeleteUsers() && (
           <Button
-            className="p-button-rounded p-button-danger m-1"
+            className=" m-1"
+            severity="danger"
+            rounded
             icon="pi pi-trash"
             tooltip="Eliminar usuario"
             tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
@@ -158,15 +162,16 @@ const UsersPage = () => {
   const deleteUserDialogFooter = (
     <React.Fragment>
       <Button
-        label="No"
+        label="Cancelar"
         icon="pi pi-times"
-        className="p-button-text"
+        className="mt-2"
+        severity="secondary"
         onClick={hideDeleteUserDialog}
       />
       <Button
-        label="Si"
+        label="Eliminar"
         icon="pi pi-check"
-        className="p-button-text"
+        className="mt-2"
         onClick={deleteUser}
       />
     </React.Fragment>
@@ -175,7 +180,7 @@ const UsersPage = () => {
   const deleteUserDialog = () => {
     return (
       <Dialog
-        className="w-3"
+        className="w-6"
         visible={deleteUserDialogVisibility}
         header="Confirmar"
         modal

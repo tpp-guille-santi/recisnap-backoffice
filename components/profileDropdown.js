@@ -39,7 +39,8 @@ const ProfileDropdown = () => {
     <div>
       <Button
         label={namePlusIcon()}
-        className="p-button-text p-0 m-0"
+        className="p-0 m-0"
+        text
         onClick={e => op.current.toggle(e)}
       />
       <OverlayPanel ref={op}>
@@ -59,7 +60,9 @@ const ProfileDropdown = () => {
             {getUserEmail()}
           </h4>
           <Button
-            className="flex align-items-center justify-content-center p-button-danger p-button-outlined m-2 mt-4"
+            className="flex align-items-center justify-content-center m-2 mt-4"
+            severity="danger"
+            outlined
             icon="pi pi-sign-out"
             label="Cerrar Sesión"
             onClick={signOut}

@@ -86,7 +86,6 @@ function HookForm() {
       }
       router.push('/instructions');
     } catch (e) {
-      console.log(e);
       toast.current.show({
         severity: 'error',
         summary: 'Error',
@@ -120,7 +119,6 @@ function HookForm() {
       }
       router.push('/instructions');
     } catch (e) {
-      console.log(e);
       toast.current.show({
         severity: 'error',
         summary: 'Error',

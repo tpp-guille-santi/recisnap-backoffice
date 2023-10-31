@@ -1,4 +1,3 @@
-'use client';
 import { Marker } from 'react-leaflet';
 
 const LocationMarker = ({ markerPosition, onClick, instruction }) => {

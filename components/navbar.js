@@ -1,24 +1,8 @@
-'use client';
 import Link from 'next/link';
-import Image from 'next/image';
-import logo from '../public/logo.svg';
 import ProfileDropdown from '../components/profileDropdown';
 import { usePathname } from 'next/navigation';
 import { canViewUsers } from '../utils/userSession';
 import ISOLogo from './isoLogo';
-
-const isologo = () => {
-  return (
-    <div className="flex align-items-center justify-content-center flex-wrap p-0 m-0">
-      <div className="flex align-items-center justify-content-center mr-1">
-        <Image src={logo} alt="Recisnap logo" height={35} />
-      </div>
-      <div className="flex align-items-center justify-content-center">
-        <h3 className="logo">Recisnap</h3>
-      </div>
-    </div>
-  );
-};
 
 const Navbar = () => {
   const pathname = usePathname();
