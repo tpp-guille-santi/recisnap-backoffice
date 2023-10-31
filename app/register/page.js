@@ -220,8 +220,15 @@ function HookForm() {
                 <Button className="p-2" type="submit" label="Registrate" />
               </div>
               <div className="mb-5">
-                Ya tenes cuenta?{' '}
-                <Link href="/login">Hace click aquí para ingresar</Link>
+                Ya tenés cuenta?{' '}
+                <Link
+                  href="/login"
+                  style={{
+                    textDecoration: 'none'
+                  }}
+                >
+                  Hacé click aquí para ingresar
+                </Link>
               </div>
             </form>
           </div>
