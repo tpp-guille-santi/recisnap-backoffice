@@ -1,32 +1,32 @@
 'use client';
-import React, { useState, useRef } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { InputText } from 'primereact/inputtext';
-import { Button } from 'primereact/button';
-import { Password } from 'primereact/password';
-import { classNames } from 'primereact/utils';
-import { Toast } from 'primereact/toast';
-import { app } from '../firebase-config';
+import React, {useState, useRef} from 'react';
+import {useForm, Controller} from 'react-hook-form';
+import {InputText} from 'primereact/inputtext';
+import {Button} from 'primereact/button';
+import {Password} from 'primereact/password';
+import {classNames} from 'primereact/utils';
+import {Toast} from 'primereact/toast';
+import {app} from '../firebase-config';
 import {
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
-  getAdditionalUserInfo
+  getAdditionalUserInfo,
 } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
-import { saveNewUser, getUserById } from '../../utils/serverConnector';
+import {useRouter} from 'next/navigation';
+import {saveNewUser, getUserById} from '../../utils/serverConnector';
 import Image from 'next/image';
 import logo from '../../public/logo.svg';
 import Link from 'next/link';
-import { emailValidator, passwordValidator } from '../../utils/validators';
+import {emailValidator, passwordValidator} from '../../utils/validators';
 import Spinner from '../../components/spinner';
-import { canViewInstructions, setUser } from '../../utils/userSession';
+import {canViewInstructions, setUser} from '../../utils/userSession';
 
 function HookForm() {
   const defaultValues = {
     email: '',
-    password: ''
+    password: '',
   };
 
   const [loading, setLoading] = useState(false);
@@ -34,12 +34,12 @@ function HookForm() {
 
   const {
     control,
-    formState: { errors },
+    formState: {errors},
     handleSubmit,
-    reset
-  } = useForm({ defaultValues: defaultValues, shouldFocusError: false });
+    reset,
+  } = useForm({defaultValues: defaultValues, shouldFocusError: false});
 
-  const onSubmit = async data => {
+  const onSubmit = async (data) => {
     setLoading(true);
     await signInWithEmail(data.email, data.password);
     reset();
@@ -48,10 +48,8 @@ function HookForm() {
 
   const router = useRouter();
 
-  const getFormErrorMessage = name => {
-    return (
-      errors[name] && <small className="p-error">{errors[name].message}</small>
-    );
+  const getFormErrorMessage = (name) => {
+    return errors[name] && <small className='p-error'>{errors[name].message}</small>;
   };
 
   const getProgressSpinner = () => {
@@ -69,7 +67,7 @@ function HookForm() {
         await saveNewUser({
           firebase_uid: credentials.user.uid,
           email: credentials.user.email,
-          name: credentials.user.displayName
+          name: credentials.user.displayName,
         });
       }
       const userInformation = await getUserById(credentials.user.uid);
@@ -78,9 +76,8 @@ function HookForm() {
         toast.current.show({
           severity: 'error',
           summary: 'Error',
-          detail:
-            'El usuario se encuentra bloqueado. Pro favor hablar con un administrador',
-          life: 3000
+          detail: 'El usuario se encuentra bloqueado. Pro favor hablar con un administrador',
+          life: 3000,
         });
         return;
       }
@@ -90,7 +87,7 @@ function HookForm() {
         severity: 'error',
         summary: 'Error',
         detail: 'Error al intentar ingresar',
-        life: 3000
+        life: 3000,
       });
     }
     setLoading(false);
@@ -99,11 +96,7 @@ function HookForm() {
   const signInWithEmail = async (email, password) => {
     try {
       const auth = getAuth(app);
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       const userInformation = await getUserById(user.uid);
       setUser(userInformation);
@@ -111,9 +104,8 @@ function HookForm() {
         toast.current.show({
           severity: 'error',
           summary: 'Error',
-          detail:
-            'El usuario se encuentra bloqueado. Pro favor hablar con un administrador',
-          life: 3000
+          detail: 'El usuario se encuentra bloqueado. Pro favor hablar con un administrador',
+          life: 3000,
         });
         return;
       }
@@ -123,7 +115,7 @@ function HookForm() {
         severity: 'error',
         summary: 'Error',
         detail: 'Error al intentar ingresar',
-        life: 3000
+        life: 3000,
       });
     }
   };
@@ -132,51 +124,48 @@ function HookForm() {
     <div>
       <Toast ref={toast} />
       {getProgressSpinner()}
-      <div className="card">
-        <div className="h-screen flex justify-content-center align-content-center flex-wrap">
-          <div className="inline-flex flex-wrap flex-column surface-card border-round shadow-2 py-6 px-8">
-            <div className="flex align-items-center justify-content-center flex-wrap pb-5">
-              <div className="flex align-items-center justify-content-center">
-                <Image src={logo} alt="Recisnap logo" height={60} />
+      <div className='card'>
+        <div className='h-screen flex justify-content-center align-content-center flex-wrap'>
+          <div className='inline-flex flex-wrap flex-column surface-card border-round shadow-2 py-6 px-8'>
+            <div className='flex align-items-center justify-content-center flex-wrap pb-5'>
+              <div className='flex align-items-center justify-content-center'>
+                <Image src={logo} alt='Recisnap logo' height={60} />
               </div>
-              <div className="flex align-items-center justify-content-center">
-                <h1 className="logo">Recisnap</h1>
+              <div className='flex align-items-center justify-content-center'>
+                <h1 className='logo'>Recisnap</h1>
               </div>
             </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
-              <div className="mb-5">
-                <span className="p-float-label p-input-icon-right">
-                  <i className="pi pi-envelope" />
+            <form onSubmit={handleSubmit(onSubmit)} className='p-fluid'>
+              <div className='mb-5'>
+                <span className='p-float-label p-input-icon-right'>
+                  <i className='pi pi-envelope' />
                   <Controller
-                    name="email"
+                    name='email'
                     control={control}
-                    rules={{ validate: emailValidator }}
-                    render={({ field, fieldState }) => (
+                    rules={{validate: emailValidator}}
+                    render={({field, fieldState}) => (
                       <InputText
                         id={field.name}
                         {...field}
                         className={classNames({
-                          'p-invalid': fieldState.invalid
+                          'p-invalid': fieldState.invalid,
                         })}
                       />
                     )}
                   />
-                  <label
-                    htmlFor="email"
-                    className={classNames({ 'p-error': !!errors.email })}
-                  >
+                  <label htmlFor='email' className={classNames({'p-error': !!errors.email})}>
                     Email
                   </label>
                 </span>
                 {getFormErrorMessage('email')}
               </div>
-              <div className="mb-5">
-                <span className="p-float-label">
+              <div className='mb-5'>
+                <span className='p-float-label'>
                   <Controller
-                    name="password"
+                    name='password'
                     control={control}
-                    rules={{ validate: passwordValidator }}
-                    render={({ field, fieldState }) => (
+                    rules={{validate: passwordValidator}}
+                    render={({field, fieldState}) => (
                       <Password
                         id={field.name}
                         {...field}
@@ -184,52 +173,49 @@ function HookForm() {
                         toggleMask
                         feedback={false}
                         className={classNames({
-                          'p-invalid': fieldState.invalid
+                          'p-invalid': fieldState.invalid,
                         })}
                       />
                     )}
                   />
-                  <label
-                    htmlFor="password"
-                    className={classNames({ 'p-error': errors.password })}
-                  >
+                  <label htmlFor='password' className={classNames({'p-error': errors.password})}>
                     Contraseña
                   </label>
                 </span>
                 {getFormErrorMessage('password')}
               </div>
 
-              <div className="mb-5">
-                <Button className="p-2" type="submit" label="Ingresar" />
+              <div className='mb-5'>
+                <Button className='p-2' type='submit' label='Ingresar' />
               </div>
-              <div className="mb-5">
+              <div className='mb-5'>
                 <Link
-                  href="/reset"
+                  href='/reset'
                   style={{
-                    textDecoration: 'none'
+                    textDecoration: 'none',
                   }}
                 >
                   Olvidé mi contraseña
                 </Link>
               </div>
-              <div className="mb-5">
+              <div className='mb-5'>
                 <hr></hr>
               </div>
             </form>
-            <div className="mb-5">
+            <div className='mb-5'>
               <Button
-                className="p-2 bg-white text-color w-full"
-                icon="pi pi-google"
-                label="Continuar con Google"
+                className='p-2 bg-white text-color w-full'
+                icon='pi pi-google'
+                label='Continuar con Google'
                 onClick={signInWithGoogle}
               />
             </div>
-            <div className="mb-5">
+            <div className='mb-5'>
               No tenés cuenta?{' '}
               <Link
-                href="/register"
+                href='/register'
                 style={{
-                  textDecoration: 'none'
+                  textDecoration: 'none',
                 }}
               >
                 Hacé click aquí para registrarte

@@ -1,25 +1,25 @@
 'use client';
-import React, { useEffect, useState, useRef } from 'react';
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
-import { getUserList } from '../../utils/serverConnector';
-import { deleteUserById } from '../../utils/serverConnector';
-import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
+import React, {useEffect, useState, useRef} from 'react';
+import {Column} from 'primereact/column';
+import {DataTable} from 'primereact/datatable';
+import {getUserList} from '../../utils/serverConnector';
+import {deleteUserById} from '../../utils/serverConnector';
+import {Button} from 'primereact/button';
+import {InputText} from 'primereact/inputtext';
 import PermissionIcon from '../../components/permissionIcon.js';
 import EditPermissionsDialog from '../../components/permissions/editPermissionsDialog.js';
-import { Dialog } from 'primereact/dialog';
+import {Dialog} from 'primereact/dialog';
 import PrivateRoute from '../../components/privateRoute';
 import Navbar from '../../components/navbar';
 import all_permissions from '../../config/permissions.json';
-import { Toast } from 'primereact/toast';
-import { useRouter } from 'next/navigation';
+import {Toast} from 'primereact/toast';
+import {useRouter} from 'next/navigation';
 import {
   canDeleteUsers,
   canEditPermissions,
   canViewUserActions,
   getUserFirebaseUid,
-  logout
+  logout,
 } from '../../utils/userSession';
 
 const UsersPage = () => {
@@ -29,12 +29,11 @@ const UsersPage = () => {
   const [currentUser, setCurrentUser] = useState([]);
   const [editedUserId, setEditedUserId] = useState('');
   const [globalFilter, setGlobalFilter] = useState(null);
-  const [deleteUserDialogVisibility, setDeleteUserDialogVisibility] =
-    useState(false);
+  const [deleteUserDialogVisibility, setDeleteUserDialogVisibility] = useState(false);
   const toast = useRef(null);
 
   useEffect(() => {
-    getUsers().then(data => setUsers(data));
+    getUsers().then((data) => setUsers(data));
   }, []);
 
   const router = useRouter();
@@ -47,12 +46,11 @@ const UsersPage = () => {
     return await getUserList();
   }
 
-  const permissionsColumnBody = rowData => {
-    var permissions =
-      rowData['permissions'] !== null ? rowData.permissions : [];
+  const permissionsColumnBody = (rowData) => {
+    var permissions = rowData['permissions'] !== null ? rowData.permissions : [];
     return (
       <div>
-        {all_permissions.map(permission => {
+        {all_permissions.map((permission) => {
           return (
             <PermissionIcon
               key={permission.id}
@@ -70,7 +68,7 @@ const UsersPage = () => {
     if (firebase_uid == getUserFirebaseUid()) {
       await signOut();
     }
-    const user = users.find(user => user.firebase_uid === firebase_uid);
+    const user = users.find((user) => user.firebase_uid === firebase_uid);
     user.permissions = permissions;
     setUsers(users);
     setDialogVisibility(false);
@@ -80,17 +78,17 @@ const UsersPage = () => {
     setDialogVisibility(false);
   };
 
-  const actionsBody = rowData => {
+  const actionsBody = (rowData) => {
     return (
       <div>
         {canEditPermissions() && (
           <Button
-            className="m-1"
-            severity="success"
+            className='m-1'
+            severity='success'
             rounded
-            icon="pi pi-pencil"
-            tooltip="Editar permisos"
-            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
+            icon='pi pi-pencil'
+            tooltip='Editar permisos'
+            tooltipOptions={{showOnDisabled: true, position: 'bottom'}}
             onClick={() => {
               setDialogVisibility(true);
               setCurrentPermissions(rowData.permissions);
@@ -100,12 +98,12 @@ const UsersPage = () => {
         )}
         {canDeleteUsers() && (
           <Button
-            className=" m-1"
-            severity="danger"
+            className=' m-1'
+            severity='danger'
             rounded
-            icon="pi pi-trash"
-            tooltip="Eliminar usuario"
-            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
+            icon='pi pi-trash'
+            tooltip='Eliminar usuario'
+            tooltipOptions={{showOnDisabled: true, position: 'bottom'}}
             onClick={() => confirmDeleteUser(rowData)}
           />
         )}
@@ -114,14 +112,14 @@ const UsersPage = () => {
   };
 
   const header = (
-    <div className="flex flex-column md:flex-row md:align-items-center justify-content-between">
-      <span className="p-input-icon-left w-full md:w-auto">
-        <i className="pi pi-search" />
+    <div className='flex flex-column md:flex-row md:align-items-center justify-content-between'>
+      <span className='p-input-icon-left w-full md:w-auto'>
+        <i className='pi pi-search' />
         <InputText
-          type="search"
-          onInput={e => setGlobalFilter(e.target.value)}
-          placeholder="Buscar..."
-          className="w-full lg:w-auto"
+          type='search'
+          onInput={(e) => setGlobalFilter(e.target.value)}
+          placeholder='Buscar...'
+          className='w-full lg:w-auto'
         />
       </span>
     </div>
@@ -130,27 +128,25 @@ const UsersPage = () => {
   const deleteUser = async () => {
     try {
       await deleteUserById(currentUser.firebase_uid);
-      setUsers(
-        users.filter(user => user.firebase_uid !== currentUser.firebase_uid)
-      );
+      setUsers(users.filter((user) => user.firebase_uid !== currentUser.firebase_uid));
       setDeleteUserDialogVisibility(false);
       toast.current.show({
         severity: 'success',
         summary: 'Éxito',
         detail: 'Usuaio eliminado',
-        life: 3000
+        life: 3000,
       });
     } catch (e) {
       toast.current.show({
         severity: 'error',
         summary: 'Error',
         detail: 'No se pudo eliminar el usuario',
-        life: 3000
+        life: 3000,
       });
     }
   };
 
-  const confirmDeleteUser = user => {
+  const confirmDeleteUser = (user) => {
     setCurrentUser(user);
     setDeleteUserDialogVisibility(true);
   };
@@ -162,33 +158,28 @@ const UsersPage = () => {
   const deleteUserDialogFooter = (
     <React.Fragment>
       <Button
-        label="Cancelar"
-        icon="pi pi-times"
-        className="mt-2"
-        severity="secondary"
+        label='Cancelar'
+        icon='pi pi-times'
+        className='mt-2'
+        severity='secondary'
         onClick={hideDeleteUserDialog}
       />
-      <Button
-        label="Eliminar"
-        icon="pi pi-check"
-        className="mt-2"
-        onClick={deleteUser}
-      />
+      <Button label='Eliminar' icon='pi pi-check' className='mt-2' onClick={deleteUser} />
     </React.Fragment>
   );
 
   const deleteUserDialog = () => {
     return (
       <Dialog
-        className="w-6"
+        className='w-6'
         visible={deleteUserDialogVisibility}
-        header="Confirmar"
+        header='Confirmar'
         modal
         footer={deleteUserDialogFooter}
         onHide={hideDeleteUserDialog}
       >
-        <div className="flex align-items-center justify-content-center">
-          <i className="pi pi-exclamation-triangle mr-3 text-4xl" />
+        <div className='flex align-items-center justify-content-center'>
+          <i className='pi pi-exclamation-triangle mr-3 text-4xl' />
           <span>Estás seguro de que quieres eliminar el usuario?</span>
         </div>
       </Dialog>
@@ -199,8 +190,8 @@ const UsersPage = () => {
     <PrivateRoute>
       <Toast ref={toast} />
       <Navbar></Navbar>
-      <div className="m-5">
-        <div className="text-3xl text-800 font-bold mb-4">Usuarios</div>
+      <div className='m-5'>
+        <div className='text-3xl text-800 font-bold mb-4'>Usuarios</div>
         <div>
           <EditPermissionsDialog
             visibility={dialogVisibility}
@@ -212,29 +203,21 @@ const UsersPage = () => {
         </div>
         <DataTable
           value={users}
-          dataKey="firebase_uid"
+          dataKey='firebase_uid'
           paginator
           rows={10}
           rowsPerPageOptions={[5, 10, 25]}
-          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-          currentPageReportTemplate="{first} - {last} de {totalRecords}"
+          paginatorTemplate='FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown'
+          currentPageReportTemplate='{first} - {last} de {totalRecords}'
           globalFilter={globalFilter}
           header={header}
-          responsiveLayout="scroll"
+          responsiveLayout='scroll'
         >
-          <Column field="email" header="Email" filter sortable></Column>
-          <Column field="name" header="Nombre" filter sortable></Column>
-          <Column
-            header="Permisos"
-            sortable
-            body={permissionsColumnBody}
-          ></Column>
+          <Column field='email' header='Email' filter sortable></Column>
+          <Column field='name' header='Nombre' filter sortable></Column>
+          <Column header='Permisos' sortable body={permissionsColumnBody}></Column>
           {canViewUserActions() && (
-            <Column
-              header="Acciones"
-              exportable={false}
-              body={actionsBody}
-            ></Column>
+            <Column header='Acciones' exportable={false} body={actionsBody}></Column>
           )}
         </DataTable>
       </div>

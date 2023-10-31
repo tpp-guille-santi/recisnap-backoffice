@@ -1,6 +1,6 @@
 'use client';
-import { useCallback, useEffect } from 'react';
-import { MapContainer, TileLayer } from 'react-leaflet';
+import {useCallback, useEffect} from 'react';
+import {MapContainer, TileLayer} from 'react-leaflet';
 import LocationMarker from './locationMarker';
 
 function CustomMap({
@@ -11,15 +11,15 @@ function CustomMap({
   center,
   markerPosition,
   style,
-  onMarkerClick
+  onMarkerClick,
 }) {
   const onClick = useCallback(
-    e => {
+    (e) => {
       if (!!setMarkerPosition) {
         setMarkerPosition(e.latlng);
       }
     },
-    [setMarkerPosition]
+    [setMarkerPosition],
   );
 
   useEffect(() => {
@@ -32,22 +32,13 @@ function CustomMap({
   }, [map, onClick, instructions]);
 
   return (
-    <MapContainer
-      center={center}
-      zoom={13}
-      scrollWheelZoom={true}
-      style={style}
-      ref={setMap}
-    >
+    <MapContainer center={center} zoom={13} scrollWheelZoom={true} style={style} ref={setMap}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
       />
       {!!markerPosition && (
-        <LocationMarker
-          markerPosition={markerPosition}
-          map={map}
-        ></LocationMarker>
+        <LocationMarker markerPosition={markerPosition} map={map}></LocationMarker>
       )}
       {!!instructions &&
         instructions.map((instruction, index) => (

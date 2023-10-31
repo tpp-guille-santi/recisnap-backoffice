@@ -1,8 +1,8 @@
-import { app } from '../app/firebase-config';
-import { getAuth, signOut } from 'firebase/auth';
-import { setCookie, getCookie, deleteCookie } from 'cookies-next';
+import {app} from '../app/firebase-config';
+import {getAuth, signOut} from 'firebase/auth';
+import {setCookie, getCookie, deleteCookie} from 'cookies-next';
 
-const setUser = userInformation => {
+const setUser = (userInformation) => {
   const user = userInformation.data;
   setCookie('user', user);
 };
@@ -56,9 +56,7 @@ const canDeleteUsers = () => {
 
 const canViewUserActions = () => {
   const permissions = getUserPermissions();
-  return permissions.some(r =>
-    ['edit_user_permissions', 'delete_users'].includes(r)
-  );
+  return permissions.some((r) => ['edit_user_permissions', 'delete_users'].includes(r));
 };
 
 const canDeleteInstructions = () => {
@@ -118,5 +116,5 @@ export {
   canCreateInstructions,
   canEditInstructions,
   canBlockInstructions,
-  canViewInstructions
+  canViewInstructions,
 };

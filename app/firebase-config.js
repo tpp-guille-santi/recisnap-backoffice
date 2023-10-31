@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from 'firebase/app';
+import {initializeApp} from 'firebase/app';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -12,7 +12,7 @@ const firebaseConfig = {
   storageBucket: 'recisnap.appspot.com',
   messagingSenderId: '924203588296',
   appId: '1:924203588296:web:2c3351678558628b4d23fd',
-  measurementId: 'G-8MF8Z1RPMS'
+  measurementId: 'G-8MF8Z1RPMS',
 };
 
 // Initialize Firebase

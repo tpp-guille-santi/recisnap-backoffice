@@ -1,24 +1,24 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Script from 'next/script';
 import 'leaflet/dist/leaflet.css';
-import { Steps } from 'primereact/steps';
-import { Dropdown } from 'primereact/dropdown';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { Toast } from 'primereact/toast';
-import { Button } from 'primereact/button';
-import { Dialog } from 'primereact/dialog';
-import { InputText } from 'primereact/inputtext';
+import {Steps} from 'primereact/steps';
+import {Dropdown} from 'primereact/dropdown';
+import {DataTable} from 'primereact/datatable';
+import {Column} from 'primereact/column';
+import {Toast} from 'primereact/toast';
+import {Button} from 'primereact/button';
+import {Dialog} from 'primereact/dialog';
+import {InputText} from 'primereact/inputtext';
 import MDEditor from '@uiw/react-md-editor';
 import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 import PrivateRoute from '../../components/privateRoute';
 import Navbar from '../../components/navbar';
-import { InputSwitch } from 'primereact/inputswitch';
+import {InputSwitch} from 'primereact/inputswitch';
 import {
   createInstruction,
   deleteInstruction,
@@ -28,16 +28,16 @@ import {
   getInstructions,
   getMaterials,
   updateInstruction,
-  uploadInstructionsMarkdown
+  uploadInstructionsMarkdown,
 } from '../../utils/serverConnector';
 import {
   canBlockInstructions,
   canCreateInstructions,
   canDeleteInstructions,
-  canEditInstructions
+  canEditInstructions,
 } from '../../utils/userSession';
 const CustomMap = dynamic(() => import('../../components/location/map'), {
-  ssr: false
+  ssr: false,
 });
 
 export default function Home() {
@@ -52,8 +52,8 @@ export default function Home() {
     lon: null,
     geo_json: {
       type: 'Point',
-      coordinates: [null, null]
-    }
+      coordinates: [null, null],
+    },
   };
 
   const DEFAULT_MAP_CENTER = [-34.591371, -58.42398];
@@ -68,8 +68,7 @@ export default function Home() {
   setViewLocationDialog;
   const [deleteProductDialog, setDeleteProductDialog] = useState(false);
   const [deleteProductsDialog, setDeleteProductsDialog] = useState(false);
-  const [currentInstruction, setCurrentInstruction] =
-    useState(emptyInstruction);
+  const [currentInstruction, setCurrentInstruction] = useState(emptyInstruction);
   const [selectedProducts, setSelectedProducts] = useState(null);
   const [markerPosition, setMarkerPosition] = useState(null);
   const [map, setMap] = useState(null);
@@ -80,7 +79,7 @@ export default function Home() {
   const toast = useRef(null);
   const dt = useRef(null);
 
-  const setMarkdownFromInstructions = async instruction => {
+  const setMarkdownFromInstructions = async (instruction) => {
     const potentialMarkdown = await downloadInstructionsMarkdown(instruction);
     if (potentialMarkdown != null && potentialMarkdown.trim() !== '') {
       setMarkdown(potentialMarkdown);
@@ -90,9 +89,9 @@ export default function Home() {
   };
 
   useEffect(() => {
-    getInstructions().then(data => setProducts(data));
-    getMaterials().then(data => setMaterials(data));
-    downloadTemplateMarkdown().then(data => setTemplateMarkdown(data));
+    getInstructions().then((data) => setProducts(data));
+    getMaterials().then((data) => setMaterials(data));
+    downloadTemplateMarkdown().then((data) => setTemplateMarkdown(data));
   }, []);
 
   const openNew = () => {
@@ -132,7 +131,7 @@ export default function Home() {
         severity: 'error',
         summary: 'Error',
         detail: 'Error al crear la instrucción',
-        life: 3000
+        life: 3000,
       });
       return;
     }
@@ -142,7 +141,7 @@ export default function Home() {
         severity: 'error',
         summary: 'Error',
         detail: 'Error al crear la instrucción',
-        life: 3000
+        life: 3000,
       });
       return;
     }
@@ -156,39 +155,34 @@ export default function Home() {
       severity: 'success',
       summary: 'Éxito',
       detail: 'Instrucción creada',
-      life: 3000
+      life: 3000,
     });
   };
 
   const updateProduct = async () => {
     const success = await updateInstruction(currentInstruction.id, {
-      editable: currentInstruction.editable
+      editable: currentInstruction.editable,
     });
     if (!success) {
       toast.current.show({
         severity: 'error',
         summary: 'Error',
         detail: 'Error al actualizar la instrucción',
-        life: 3000
+        life: 3000,
       });
       return;
     }
-    const uploaded = await uploadInstructionsMarkdown(
-      currentInstruction,
-      markdown
-    );
+    const uploaded = await uploadInstructionsMarkdown(currentInstruction, markdown);
     if (!uploaded) {
       toast.current.show({
         severity: 'error',
         summary: 'Error',
         detail: 'Error al actualizar la instrucción',
-        life: 3000
+        life: 3000,
       });
       return;
     }
-    const product = products.find(
-      product => product.id === currentInstruction.id
-    );
+    const product = products.find((product) => product.id === currentInstruction.id);
     product.editable = currentInstruction.editable;
     setProducts(products);
     setProductDialog(false);
@@ -198,7 +192,7 @@ export default function Home() {
       severity: 'success',
       summary: 'Éxito',
       detail: 'Instrucción actualizada',
-      life: 3000
+      life: 3000,
     });
   };
 
@@ -210,29 +204,27 @@ export default function Home() {
     }
   };
 
-  const viewLocation = instruction => {
-    setCurrentInstruction({ ...instruction });
+  const viewLocation = (instruction) => {
+    setCurrentInstruction({...instruction});
     setViewLocationDialog(true);
   };
 
-  const viewProduct = async instruction => {
-    setCurrentInstruction({ ...instruction });
+  const viewProduct = async (instruction) => {
+    setCurrentInstruction({...instruction});
     await setMarkdownFromInstructions(instruction);
     setViewProductDialog(true);
   };
 
-  const editProduct = async instruction => {
-    setCurrentInstruction({ ...instruction });
+  const editProduct = async (instruction) => {
+    setCurrentInstruction({...instruction});
     await setMarkdownFromInstructions(instruction);
     setCreateStep1(false);
     setProductDialog(true);
     setPreloaded(true);
-    setSelectedMaterial(
-      materials.find(val => val.name === instruction.material_name)
-    );
+    setSelectedMaterial(materials.find((val) => val.name === instruction.material_name));
   };
 
-  const confirmDeleteProduct = instruction => {
+  const confirmDeleteProduct = (instruction) => {
     setCurrentInstruction(instruction);
     setDeleteProductDialog(true);
   };
@@ -244,11 +236,11 @@ export default function Home() {
         severity: 'error',
         summary: 'Error',
         detail: 'No se pudo eliminar la instrucción',
-        life: 3000
+        life: 3000,
       });
       return;
     }
-    let _products = products.filter(val => val.id !== currentInstruction.id);
+    let _products = products.filter((val) => val.id !== currentInstruction.id);
     setProducts(_products);
     setDeleteProductDialog(false);
     setCurrentInstruction(currentInstruction);
@@ -256,7 +248,7 @@ export default function Home() {
       severity: 'success',
       summary: 'Éxito',
       detail: 'Instrucción eliminada',
-      life: 3000
+      life: 3000,
     });
   };
 
@@ -271,11 +263,11 @@ export default function Home() {
         severity: 'error',
         summary: 'Error',
         detail: 'No se pudieron eliminar algunas instrucciones',
-        life: 3000
+        life: 3000,
       });
       return;
     }
-    let _products = products.filter(val => !selectedProducts.includes(val));
+    let _products = products.filter((val) => !selectedProducts.includes(val));
     setProducts(_products);
     setDeleteProductsDialog(false);
     setSelectedProducts(null);
@@ -283,51 +275,50 @@ export default function Home() {
       severity: 'success',
       summary: 'Éxito',
       detail: 'Instrucciones eliminada',
-      life: 3000
+      life: 3000,
     });
   };
 
-  const actionBodyTemplate = rowData => {
+  const actionBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
         <Button
-          icon="pi pi-file"
-          className="m-1"
-          severity="info"
+          icon='pi pi-file'
+          className='m-1'
+          severity='info'
           rounded
-          tooltip="Ver instrucciones"
-          tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
+          tooltip='Ver instrucciones'
+          tooltipOptions={{showOnDisabled: true, position: 'bottom'}}
           onClick={() => viewProduct(rowData)}
         />
         <Button
-          icon="pi pi-map-marker"
-          className="m-1"
-          severity="warning"
+          icon='pi pi-map-marker'
+          className='m-1'
+          severity='warning'
           rounded
-          tooltip="Ver ubicación"
-          tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
+          tooltip='Ver ubicación'
+          tooltipOptions={{showOnDisabled: true, position: 'bottom'}}
           onClick={() => viewLocation(rowData)}
         />
-        {(canBlockInstructions() ||
-          (canEditInstructions() && rowData.editable)) && (
+        {(canBlockInstructions() || (canEditInstructions() && rowData.editable)) && (
           <Button
-            icon="pi pi-pencil"
-            className="m-1"
-            severity="success"
+            icon='pi pi-pencil'
+            className='m-1'
+            severity='success'
             rounded
-            tooltip="Editar instrucciones"
-            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
+            tooltip='Editar instrucciones'
+            tooltipOptions={{showOnDisabled: true, position: 'bottom'}}
             onClick={() => editProduct(rowData)}
           />
         )}
         {canDeleteInstructions() && (
           <Button
-            icon="pi pi-trash"
-            className="m-1"
-            severity="danger"
+            icon='pi pi-trash'
+            className='m-1'
+            severity='danger'
             rounded
-            tooltip="Eliminar instrucciones"
-            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
+            tooltip='Eliminar instrucciones'
+            tooltipOptions={{showOnDisabled: true, position: 'bottom'}}
             onClick={() => confirmDeleteProduct(rowData)}
           />
         )}
@@ -336,38 +327,38 @@ export default function Home() {
   };
 
   const header = (
-    <div className="flex flex-column md:flex-row md:align-items-center justify-content-between">
-      <span className="p-input-icon-left w-full md:w-auto">
-        <i className="pi pi-search" />
+    <div className='flex flex-column md:flex-row md:align-items-center justify-content-between'>
+      <span className='p-input-icon-left w-full md:w-auto'>
+        <i className='pi pi-search' />
         <InputText
-          type="search"
-          onInput={e => setGlobalFilter(e.target.value)}
-          placeholder="Buscar..."
-          className="w-full lg:w-auto"
+          type='search'
+          onInput={(e) => setGlobalFilter(e.target.value)}
+          placeholder='Buscar...'
+          className='w-full lg:w-auto'
         />
       </span>
-      <div className="mt-3 md:mt-0 flex justify-content-end mr-8">
+      <div className='mt-3 md:mt-0 flex justify-content-end mr-8'>
         {canCreateInstructions() && (
           <Button
-            icon="pi pi-plus"
-            className="mr-2"
-            severity="success"
+            icon='pi pi-plus'
+            className='mr-2'
+            severity='success'
             rounded
             onClick={openNew}
-            tooltip="Crear instrucciones"
-            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
+            tooltip='Crear instrucciones'
+            tooltipOptions={{showOnDisabled: true, position: 'bottom'}}
           />
         )}
         {canDeleteInstructions() && (
           <Button
-            icon="pi pi-trash"
-            className="mr-2"
-            severity="danger"
+            icon='pi pi-trash'
+            className='mr-2'
+            severity='danger'
             rounded
             onClick={confirmDeleteSelected}
             disabled={!selectedProducts || !selectedProducts.length}
-            tooltip="Eliminar selección"
-            tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
+            tooltip='Eliminar selección'
+            tooltipOptions={{showOnDisabled: true, position: 'bottom'}}
           />
         )}
       </div>
@@ -376,17 +367,17 @@ export default function Home() {
   const productDialogFooter = (
     <React.Fragment>
       <Button
-        label="Cancelar"
-        icon="pi pi-times"
-        className="mt-2"
-        severity="secondary"
+        label='Cancelar'
+        icon='pi pi-times'
+        className='mt-2'
+        severity='secondary'
         onClick={hideDialog}
       />
       {createStep1 ? (
         <Button
-          label="Siguiente"
-          icon="pi pi-arrow-right"
-          className="mt-2"
+          label='Siguiente'
+          icon='pi pi-arrow-right'
+          className='mt-2'
           onClick={() => {
             setCurrentInstruction({
               ...currentInstruction,
@@ -394,8 +385,8 @@ export default function Home() {
               lon: markerPosition.lng,
               geo_json: {
                 type: 'Point',
-                coordinates: [markerPosition.lng, markerPosition.lat]
-              }
+                coordinates: [markerPosition.lng, markerPosition.lat],
+              },
             });
             setCreateStep1(false);
           }}
@@ -403,8 +394,8 @@ export default function Home() {
         />
       ) : (
         <Button
-          label="Guardar"
-          icon="pi pi-check"
+          label='Guardar'
+          icon='pi pi-check'
           onClick={saveProduct}
           disabled={!currentInstruction.material_name}
         />
@@ -415,34 +406,29 @@ export default function Home() {
   const deleteProductDialogFooter = (
     <React.Fragment>
       <Button
-        label="Cancelar"
-        icon="pi pi-times"
-        className="mt-2"
-        severity="secondary"
+        label='Cancelar'
+        icon='pi pi-times'
+        className='mt-2'
+        severity='secondary'
         onClick={hideDeleteProductDialog}
       />
-      <Button
-        label="Eliminar"
-        icon="pi pi-check"
-        className="mt-2"
-        onClick={deleteProduct}
-      />
+      <Button label='Eliminar' icon='pi pi-check' className='mt-2' onClick={deleteProduct} />
     </React.Fragment>
   );
 
   const deleteProductsDialogFooter = (
     <React.Fragment>
       <Button
-        label="Cancelar"
-        icon="pi pi-times"
-        className="mt-2"
-        severity="secondary"
+        label='Cancelar'
+        icon='pi pi-times'
+        className='mt-2'
+        severity='secondary'
         onClick={hideDeleteProductsDialog}
       />
       <Button
-        label="Eliminar"
-        icon="pi pi-check"
-        className="mt-2"
+        label='Eliminar'
+        icon='pi pi-check'
+        className='mt-2'
         onClick={deleteSelectedProducts}
       />
     </React.Fragment>
@@ -459,7 +445,7 @@ export default function Home() {
               setMarkerPosition={setMarkerPosition}
               map={map}
               setMap={setMap}
-              style={{ height: '65vh' }}
+              style={{height: '65vh'}}
             ></CustomMap>
           </div>
         )
@@ -470,39 +456,39 @@ export default function Home() {
         !createStep1 && (
           <div>
             <Dropdown
-              className="flex flex-1 align-items-center justify-content-center capitalize my-2"
-              optionLabel="name"
+              className='flex flex-1 align-items-center justify-content-center capitalize my-2'
+              optionLabel='name'
               value={selectedMaterial}
               options={materials}
-              placeholder="Seleccione un material"
-              onChange={e => {
+              placeholder='Seleccione un material'
+              onChange={(e) => {
                 setSelectedMaterial(e.value);
                 setCurrentInstruction({
                   ...currentInstruction,
-                  material_name: e.value.name
+                  material_name: e.value.name,
                 });
               }}
               required
               autoFocus
               disabled={preloaded}
             ></Dropdown>
-            <div className="flex flex-row justify-content-end my-2">
-              <label className="flex align-items-center justify-content-center m-1">
+            <div className='flex flex-row justify-content-end my-2'>
+              <label className='flex align-items-center justify-content-center m-1'>
                 Habilitada:{' '}
               </label>
               <InputSwitch
-                className="flex align-items-center justify-content-center m-1"
+                className='flex align-items-center justify-content-center m-1'
                 checked={currentInstruction.editable}
-                onChange={e =>
+                onChange={(e) =>
                   setCurrentInstruction({
                     ...currentInstruction,
-                    editable: e.value
+                    editable: e.value,
                   })
                 }
               ></InputSwitch>
             </div>
             <MDEditor
-              data-color-mode="light"
+              data-color-mode='light'
               height={550}
               value={markdown}
               onChange={setMarkdown}
@@ -514,27 +500,23 @@ export default function Home() {
 
     const items = [
       {
-        label: 'Ubicación'
+        label: 'Ubicación',
       },
       {
-        label: 'Contenido'
-      }
+        label: 'Contenido',
+      },
     ];
     return (
       <Dialog
         visible={productDialog}
         modal
         maximized={true}
-        className="p-fluid"
+        className='p-fluid'
         footer={productDialogFooter}
         onHide={hideDialog}
       >
         {!preloaded && (
-          <Steps
-            model={items}
-            activeIndex={createStep1 ? 0 : 1}
-            className="mx-8 mb-2"
-          />
+          <Steps model={items} activeIndex={createStep1 ? 0 : 1} className='mx-8 mb-2' />
         )}
         {step1Div()}
         {step2Div()}
@@ -546,63 +528,63 @@ export default function Home() {
     <PrivateRoute>
       <Head>
         <Link
-          rel="stylesheet"
-          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossOrigin=""
+          rel='stylesheet'
+          href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+          integrity='sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY='
+          crossOrigin=''
         />
       </Head>
       <Script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossOrigin=""
+        src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
+        integrity='sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo='
+        crossOrigin=''
       />
       <Navbar></Navbar>
       <Toast ref={toast} />
-      <div className="m-5">
-        <div className="text-3xl text-800 font-bold mb-4">Instrucciones</div>
+      <div className='m-5'>
+        <div className='text-3xl text-800 font-bold mb-4'>Instrucciones</div>
 
         <DataTable
           ref={dt}
           value={products}
           selection={selectedProducts}
-          onSelectionChange={e => setSelectedProducts(e.value)}
-          dataKey="id"
+          onSelectionChange={(e) => setSelectedProducts(e.value)}
+          dataKey='id'
           paginator
           rows={10}
           rowsPerPageOptions={[5, 10, 25]}
-          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-          currentPageReportTemplate="{first} - {last} de {totalRecords}"
+          paginatorTemplate='FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown'
+          currentPageReportTemplate='{first} - {last} de {totalRecords}'
           globalFilter={globalFilter}
           header={header}
-          responsiveLayout="scroll"
+          responsiveLayout='scroll'
         >
-          <Column selectionMode="multiple" exportable={false}></Column>
+          <Column selectionMode='multiple' exportable={false}></Column>
           <Column
-            className="capitalize"
-            field="provincia"
-            header="Provincia"
+            className='capitalize'
+            field='provincia'
+            header='Provincia'
             filter
             sortable
           ></Column>
           <Column
-            className="capitalize"
-            field="departamento"
-            header="Departamento"
+            className='capitalize'
+            field='departamento'
+            header='Departamento'
             filter
             sortable
           ></Column>
           <Column
-            className="capitalize"
-            field="municipio"
-            header="Municipio"
+            className='capitalize'
+            field='municipio'
+            header='Municipio'
             filter
             sortable
           ></Column>
           <Column
-            className="capitalize"
-            field="material_name"
-            header="Material"
+            className='capitalize'
+            field='material_name'
+            header='Material'
             filter
             sortable
           ></Column>
@@ -612,15 +594,15 @@ export default function Home() {
       {createDialog()}
 
       <Dialog
-        className="w-6"
+        className='w-6'
         header={`Material ${currentInstruction.material_name}`}
         visible={viewProductDialog}
         modal
         onHide={hideViewDialog}
       >
         <MDEditor
-          className="mt-1"
-          data-color-mode="light"
+          className='mt-1'
+          data-color-mode='light'
           height={600}
           value={markdown}
           onChange={setMarkdown}
@@ -630,49 +612,41 @@ export default function Home() {
         />
       </Dialog>
 
-      <Dialog
-        className="w-6"
-        visible={viewLocationDialog}
-        modal
-        onHide={hideViewDialog}
-      >
+      <Dialog className='w-6' visible={viewLocationDialog} modal onHide={hideViewDialog}>
         <CustomMap
           center={[currentInstruction.lat, currentInstruction.lon]}
           markerPosition={[currentInstruction.lat, currentInstruction.lon]}
           map={map}
           setMap={setMap}
-          style={{ height: '65vh' }}
+          style={{height: '65vh'}}
         ></CustomMap>
       </Dialog>
 
       <Dialog
-        className="w-6"
+        className='w-6'
         visible={deleteProductDialog}
-        header="Confirmar"
+        header='Confirmar'
         modal
         footer={deleteProductDialogFooter}
         onHide={hideDeleteProductDialog}
       >
-        <div className="flex align-items-center justify-content-center">
-          <i className="pi pi-exclamation-triangle mr-3 text-4xl" />
+        <div className='flex align-items-center justify-content-center'>
+          <i className='pi pi-exclamation-triangle mr-3 text-4xl' />
           <span>Estás seguro de que quieres eliminar la instrucción?</span>
         </div>
       </Dialog>
 
       <Dialog
-        className="w-6"
+        className='w-6'
         visible={deleteProductsDialog}
-        header="Confirmar"
+        header='Confirmar'
         modal
         footer={deleteProductsDialogFooter}
         onHide={hideDeleteProductsDialog}
       >
-        <div className="flex align-items-center justify-content-center">
-          <i className="pi pi-exclamation-triangle mr-3 text-4xl" />
-          <span>
-            Estás seguro de que quieres eliminar las instrucciones
-            seleccionadas?
-          </span>
+        <div className='flex align-items-center justify-content-center'>
+          <i className='pi pi-exclamation-triangle mr-3 text-4xl' />
+          <span>Estás seguro de que quieres eliminar las instrucciones seleccionadas?</span>
         </div>
       </Dialog>
     </PrivateRoute>
