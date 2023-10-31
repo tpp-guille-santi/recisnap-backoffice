@@ -203,7 +203,14 @@ function HookForm() {
                 <Button className="p-2" type="submit" label="Ingresar" />
               </div>
               <div className="mb-5">
-                <Link href="/reset">Olvidé mi contraseña</Link>
+                <Link
+                  href="/reset"
+                  style={{
+                    textDecoration: 'none'
+                  }}
+                >
+                  Olvidé mi contraseña
+                </Link>
               </div>
               <div className="mb-5">
                 <hr></hr>
@@ -211,15 +218,22 @@ function HookForm() {
             </form>
             <div className="mb-5">
               <Button
-                className="p-2 bg-white text-color  w-full"
+                className="p-2 bg-white text-color w-full"
                 icon="pi pi-google"
                 label="Continuar con Google"
                 onClick={signInWithGoogle}
               />
             </div>
             <div className="mb-5">
-              No tenes cuenta?{' '}
-              <Link href="/register">Hace click aquí para registrarte</Link>
+              No tenés cuenta?{' '}
+              <Link
+                href="/register"
+                style={{
+                  textDecoration: 'none'
+                }}
+              >
+                Hacé click aquí para registrarte
+              </Link>
             </div>
           </div>
         </div>

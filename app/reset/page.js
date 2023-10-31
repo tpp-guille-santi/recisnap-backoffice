@@ -80,9 +80,7 @@ function HookForm() {
             </div>
             <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
               <div className="mb-5">
-                <Link href="/login">
-                  Por favor, ingrese su email abajo y haga click en el botón
-                </Link>
+                Por favor, ingrese su email abajo y haga click en el botón
               </div>
               <div className="mb-5">
                 <span className="p-float-label p-input-icon-right">
@@ -118,8 +116,13 @@ function HookForm() {
                 />
               </div>
               <div className="mb-5">
-                <Link href="/login">
-                  Hace click aquí para volver a ingresar
+                <Link
+                  href="/login"
+                  style={{
+                    textDecoration: 'none'
+                  }}
+                >
+                  Hacé click aquí para volver a ingresar
                 </Link>
               </div>
             </form>

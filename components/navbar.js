@@ -6,17 +6,20 @@ import ISOLogo from './isoLogo';
 
 const Navbar = () => {
   const pathname = usePathname();
-  const instructionsColor =
-    pathname === '/instructions' ? '' : 'text-color-secondary';
-  const usersColor = pathname === '/users' ? '' : 'text-color-secondary';
+  const instructionsColor = pathname === '/instructions' ? 'black' : 'gray';
+  const usersColor = pathname === '/users' ? 'black' : 'gray';
   return (
     <div className="flex justify-content-between align-items-center px-4 mb-4">
       <ISOLogo />
       <nav className="flex justify-content-center align-items-center">
         <i className="pi pi-book"></i>
         <Link
-          style={{ textDecoration: 'none' }}
-          className={`text-bold ${instructionsColor}`}
+          style={{
+            textDecoration: 'none',
+            fontWeight: 'bold',
+            color: instructionsColor
+          }}
+          className="m-2"
           href="/instructions"
         >
           Instrucciones
@@ -25,8 +28,12 @@ const Navbar = () => {
           <div>
             <i className="pi pi-users ml-4"></i>
             <Link
-              style={{ textDecoration: 'none' }}
-              className={`text-bold ${usersColor}`}
+              style={{
+                textDecoration: 'none',
+                fontWeight: 'bold',
+                color: usersColor
+              }}
+              className="m-2"
               href="/users"
             >
               Usuarios
