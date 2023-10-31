@@ -1,7 +1,7 @@
-import { Button } from 'primereact/button';
-import { useRouter } from 'next/navigation';
+import {Button} from 'primereact/button';
+import {useRouter} from 'next/navigation';
 
-const RouterButton = props => {
+const RouterButton = (props) => {
   const router = useRouter();
 
   return (

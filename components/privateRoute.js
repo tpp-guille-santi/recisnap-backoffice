@@ -1,7 +1,7 @@
-import { redirect } from 'next/navigation';
-import { isLoggedIn } from '../utils/userSession';
+import {redirect} from 'next/navigation';
+import {isLoggedIn} from '../utils/userSession';
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({children}) => {
   if (!isLoggedIn()) {
     redirect('/login');
   }

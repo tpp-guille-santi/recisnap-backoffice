@@ -1,6 +1,6 @@
-import { Marker } from 'react-leaflet';
+import {Marker} from 'react-leaflet';
 
-const LocationMarker = ({ markerPosition, onClick, instruction }) => {
+const LocationMarker = ({markerPosition, onClick, instruction}) => {
   const clickedMarker = () => {
     if (onClick && instruction) {
       return onClick(instruction);
@@ -12,7 +12,7 @@ const LocationMarker = ({ markerPosition, onClick, instruction }) => {
     return new L.Icon({
       iconUrl: `static/images/${source}.svg`,
       iconSize: [40, 40],
-      iconAnchor: [12, 40]
+      iconAnchor: [12, 40],
     });
   };
 
@@ -22,7 +22,7 @@ const LocationMarker = ({ markerPosition, onClick, instruction }) => {
       icon={getIcon()}
       draggable={false}
       eventHandlers={{
-        click: clickedMarker
+        click: clickedMarker,
       }}
     ></Marker>
   );

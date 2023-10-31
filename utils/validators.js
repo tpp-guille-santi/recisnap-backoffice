@@ -1,11 +1,11 @@
-export const nameValidator = name => {
+export const nameValidator = (name) => {
   if (!name.trim()) {
     return 'Name is required';
   }
   return null;
 };
 
-export const emailValidator = email => {
+export const emailValidator = (email) => {
   if (!email) {
     return 'Email is required';
   } else if (!new RegExp(/\S+@\S+\.\S+/).test(email)) {
@@ -14,7 +14,7 @@ export const emailValidator = email => {
   return null;
 };
 
-export const passwordValidator = password => {
+export const passwordValidator = (password) => {
   if (!password) {
     return 'Password is required';
   } else if (password.length < 6) {

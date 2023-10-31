@@ -1,12 +1,12 @@
 import axios from 'axios';
 
-const saveNewUser = async body => {
+const saveNewUser = async (body) => {
   const response = await axios
     .post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/`, body)
-    .then(response => {
+    .then((response) => {
       return response.code == 201;
     })
-    .catch(e => {
+    .catch((e) => {
       console.log(e);
     });
   return response;
@@ -14,9 +14,7 @@ const saveNewUser = async body => {
 
 const getUserList = async () => {
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/`
-    );
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/`);
     return response.data;
   } catch (e) {
     console.log(e);
@@ -24,18 +22,15 @@ const getUserList = async () => {
   }
 };
 
-const getUserById = async firebaseId => {
-  return await axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}/`
-  );
+const getUserById = async (firebaseId) => {
+  return await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}/`);
 };
 
 const updateUserPermissions = async (userId, permissions) => {
   try {
-    await axios.patch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}/`,
-      { permissions: permissions }
-    );
+    await axios.patch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}/`, {
+      permissions: permissions,
+    });
     return true;
   } catch (e) {
     console.log(e);
@@ -43,17 +38,13 @@ const updateUserPermissions = async (userId, permissions) => {
   }
 };
 
-const deleteUserById = async firebaseId => {
-  await axios.delete(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}/`
-  );
+const deleteUserById = async (firebaseId) => {
+  await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${firebaseId}/`);
 };
 
 const getInstructions = async () => {
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/`
-    );
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/`);
     return response.data;
   } catch (e) {
     console.log(e);
@@ -61,18 +52,15 @@ const getInstructions = async () => {
   }
 };
 
-const createInstruction = async instruction => {
+const createInstruction = async (instruction) => {
   try {
     const body = {
       material_name: instruction.material_name,
       editable: instruction.editable,
       lat: instruction.lat,
-      lon: instruction.lon
+      lon: instruction.lon,
     };
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/`,
-      body
-    );
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/`, body);
     return response.data;
   } catch (e) {
     console.log(e);
@@ -84,7 +72,7 @@ const updateInstruction = async (instructionId, body) => {
   try {
     await axios.patch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instructionId}/`,
-      body
+      body,
     );
     return true;
   } catch (e) {
@@ -93,11 +81,9 @@ const updateInstruction = async (instructionId, body) => {
   }
 };
 
-const deleteInstruction = async instruciton => {
+const deleteInstruction = async (instruciton) => {
   try {
-    await axios.delete(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruciton.id}/`
-    );
+    await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruciton.id}/`);
     return true;
   } catch (e) {
     console.log(e);
@@ -105,26 +91,26 @@ const deleteInstruction = async instruciton => {
   }
 };
 
-const deleteInstructions = async instrucitons => {
+const deleteInstructions = async (instrucitons) => {
   const success = await instrucitons.every(deleteInstruction);
   return success;
 };
 
 const uploadInstructionsMarkdown = async (instruction, markdown) => {
   try {
-    const blob = new Blob([markdown], { type: 'text/plain' });
+    const blob = new Blob([markdown], {type: 'text/plain'});
     const form = new FormData();
     form.append('file', blob, `${instruction.id}.md`);
     const headers = {
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'multipart/form-data'
-      }
+        'Content-Type': 'multipart/form-data',
+      },
     };
     await axios.post(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruction.id}/markdown/`,
       form,
-      headers
+      headers,
     );
     downloadInstructionsMarkdown(instruction);
     return true;
@@ -134,10 +120,10 @@ const uploadInstructionsMarkdown = async (instruction, markdown) => {
   }
 };
 
-const downloadInstructionsMarkdown = async instruction => {
+const downloadInstructionsMarkdown = async (instruction) => {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruction.id}/markdown/`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/${instruction.id}/markdown/`,
     );
     return response.data;
   } catch (e) {
@@ -149,7 +135,7 @@ const downloadInstructionsMarkdown = async instruction => {
 const downloadTemplateMarkdown = async () => {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/markdown/template/`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/instructions/markdown/template/`,
     );
     return response.data;
   } catch (e) {
@@ -161,7 +147,7 @@ const downloadTemplateMarkdown = async () => {
 const getMaterials = async () => {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/materials/?enabled=true`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/materials/?enabled=true`,
     );
     return response.data;
   } catch (e) {
@@ -184,5 +170,5 @@ export {
   uploadInstructionsMarkdown,
   downloadInstructionsMarkdown,
   downloadTemplateMarkdown,
-  getMaterials
+  getMaterials,
 };
