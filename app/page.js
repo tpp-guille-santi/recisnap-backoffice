@@ -23,7 +23,7 @@ export default function Home() {
   const [currentInstruction, setCurrentInstruction] = useState('');
   useEffect(() => {
     getInstructions().then((instructions) => setInstructions(instructions));
-  }, [instructions]);
+  }, [setInstructions]);
 
   const viewProduct = async (instruction) => {
     setCurrentInstruction(instruction);
