@@ -140,7 +140,7 @@ const downloadTemplateMarkdown = async () => {
     return response.data;
   } catch (e) {
     console.log(e);
-    return null;
+    return '';
   }
 };
 

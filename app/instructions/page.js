@@ -59,8 +59,8 @@ export default function Home() {
   const DEFAULT_MAP_CENTER = [-34.591371, -58.42398];
 
   const [preloaded, setPreloaded] = useState(false);
-  const [products, setProducts] = useState(null);
-  const [materials, setMaterials] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [materials, setMaterials] = useState([]);
   const [productDialog, setProductDialog] = useState(false);
   const [createStep1, setCreateStep1] = useState(true);
   const [viewProductDialog, setViewProductDialog] = useState(false);
@@ -72,9 +72,8 @@ export default function Home() {
   const [selectedProducts, setSelectedProducts] = useState(null);
   const [markerPosition, setMarkerPosition] = useState(null);
   const [map, setMap] = useState(null);
-  const [globalFilter, setGlobalFilter] = useState(null);
   const [markdown, setMarkdown] = useState('');
-  const [templateMarkdown, setTemplateMarkdown] = useState();
+  const [templateMarkdown, setTemplateMarkdown] = useState('');
   const [selectedMaterial, setSelectedMaterial] = useState('');
   const toast = useRef(null);
   const dt = useRef(null);
@@ -328,15 +327,7 @@ export default function Home() {
 
   const header = (
     <div className='flex flex-column md:flex-row md:align-items-center justify-content-between'>
-      <span className='p-input-icon-left w-full md:w-auto'>
-        <i className='pi pi-search' />
-        <InputText
-          type='search'
-          onInput={(e) => setGlobalFilter(e.target.value)}
-          placeholder='Buscar...'
-          className='w-full lg:w-auto'
-        />
-      </span>
+      <span className='p-input-icon-left w-full md:w-auto'></span>
       <div className='mt-3 md:mt-0 flex justify-content-end mr-8'>
         {canCreateInstructions() && (
           <Button
@@ -555,7 +546,6 @@ export default function Home() {
           rowsPerPageOptions={[5, 10, 25]}
           paginatorTemplate='FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown'
           currentPageReportTemplate='{first} - {last} de {totalRecords}'
-          globalFilter={globalFilter}
           header={header}
           responsiveLayout='scroll'
         >
