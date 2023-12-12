@@ -12,7 +12,6 @@ import {Column} from 'primereact/column';
 import {Toast} from 'primereact/toast';
 import {Button} from 'primereact/button';
 import {Dialog} from 'primereact/dialog';
-import {InputText} from 'primereact/inputtext';
 import MDEditor from '@uiw/react-md-editor';
 import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
