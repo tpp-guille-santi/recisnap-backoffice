@@ -28,7 +28,6 @@ const UsersPage = () => {
   const [currentPermissions, setCurrentPermissions] = useState([]);
   const [currentUser, setCurrentUser] = useState([]);
   const [editedUserId, setEditedUserId] = useState('');
-  const [globalFilter, setGlobalFilter] = useState(null);
   const [deleteUserDialogVisibility, setDeleteUserDialogVisibility] = useState(false);
   const toast = useRef(null);
 
@@ -110,20 +109,6 @@ const UsersPage = () => {
       </div>
     );
   };
-
-  const header = (
-    <div className='flex flex-column md:flex-row md:align-items-center justify-content-between'>
-      <span className='p-input-icon-left w-full md:w-auto'>
-        <i className='pi pi-search' />
-        <InputText
-          type='search'
-          onInput={(e) => setGlobalFilter(e.target.value)}
-          placeholder='Buscar...'
-          className='w-full lg:w-auto'
-        />
-      </span>
-    </div>
-  );
 
   const deleteUser = async () => {
     try {
@@ -209,8 +194,6 @@ const UsersPage = () => {
           rowsPerPageOptions={[5, 10, 25]}
           paginatorTemplate='FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown'
           currentPageReportTemplate='{first} - {last} de {totalRecords}'
-          globalFilter={globalFilter}
-          header={header}
           responsiveLayout='scroll'
         >
           <Column field='email' header='Email' filter sortable></Column>
