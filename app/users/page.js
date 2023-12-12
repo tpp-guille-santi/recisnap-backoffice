@@ -5,7 +5,6 @@ import {DataTable} from 'primereact/datatable';
 import {getUserList} from '../../utils/serverConnector';
 import {deleteUserById} from '../../utils/serverConnector';
 import {Button} from 'primereact/button';
-import {InputText} from 'primereact/inputtext';
 import PermissionIcon from '../../components/permissionIcon.js';
 import EditPermissionsDialog from '../../components/permissions/editPermissionsDialog.js';
 import {Dialog} from 'primereact/dialog';
